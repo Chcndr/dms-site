@@ -1,33 +1,52 @@
 name: Build & Deploy (GitHub Pages)
+
 on:
   push:
     branches: [ main ]
   workflow_dispatch:
+
 permissions:
   contents: read
   pages: write
   id-token: write
+
 concurrency:
   group: "pages"
   cancel-in-progress: true
+
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Configure Pages
-        uses: actions/configure-pages@v5
-      - name: Upload site
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      - name: Install dependencies
+        run: |
+          if [ -f package.json ]; then npm ci || npm i; else echo "No package.json, skip install"; fi
+
+      - name: Build project
+        run: |
+          if [ -f package.json ]; then npm run build || echo "No build script, skipping"; fi
+          mkdir -p dist
+          cp -R * dist/ 2>/dev/null || true
+
+      - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: .
+          path: ./dist
+
   deploy:
     needs: build
     runs-on: ubuntu-latest
     environment:
       name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
+      url: ${ steps.deployment.outputs.page_url }
     steps:
       - name: Deploy to GitHub Pages
         id: deployment

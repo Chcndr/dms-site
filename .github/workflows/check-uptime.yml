@@ -1,0 +1,18 @@
+name: Check Uptime (every 30 min)
+
+on:
+  schedule:
+    - cron: "*/30 * * * *"
+  workflow_dispatch:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Curl homepage
+        run: |
+          CODE=$(curl -s -o /dev/null -w "%{http_code}" "${{ github.server_url }}/${{ github.repository_owner }}/${{ github.event.repository.name }}/")
+          echo "HTTP $CODE"
+          if [ "$CODE" != "200" ]; then
+            echo "::warning ::Homepage not returning 200"
+          fi

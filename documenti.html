@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Documenti · DMS</title>
+  <link rel="stylesheet" href="assets/styles-extra.css">
+</head>
+<body>
+  <h1>Documenti</h1>
+  <p>Elenco dei PDF presenti in <code>docs/</code>. Modifica <code>data/docs.json</code> per aggiungere titoli e categorie.</p>
+  <div id="list"></div>
+  <script>
+    fetch('data/docs.json').then(r => r.json()).then(items => {
+      const c = document.getElementById('list');
+      const ul = document.createElement('ul');
+      for (const it of items) {
+        const li = document.createElement('li');
+        li.innerHTML = `<strong>${it.title}</strong> — <a href="docs/${it.file}" target="_blank">Apri PDF</a> <em>(${it.tag})</em>`;
+        ul.appendChild(li);
+      }
+      c.appendChild(ul);
+    }).catch(e => {
+      document.getElementById('list').textContent = 'Nessun documento trovato.';
+      console.error(e);
+    });
+  </script>
+</body>
+</html>
