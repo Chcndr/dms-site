@@ -1,0 +1,47 @@
+{
+  "generatedAt": "2025-08-15T13:09:11.481091Z",
+  "items": [
+    {
+      "type": "video",
+      "title": "HUB NAZIONALE DEL COMMERCIO \u2013 Pitch",
+      "url": "https://example.com/video/hub_nazionale.mp4",
+      "thumb": "https://example.com/thumbs/hub_nazionale.jpg",
+      "tags": [
+        "DMS",
+        "Nazionale",
+        "Pitch"
+      ]
+    },
+    {
+      "type": "pdf",
+      "title": "DMS \u2013 DOSSIER NAZIONALE",
+      "url": "https://example.com/pdf/DOSSIER_NAZIONALE.pdf",
+      "tags": [
+        "DMS",
+        "Ministeri",
+        "SICONBEP"
+      ]
+    },
+    {
+      "type": "pdf",
+      "title": "DMS ECC \u2013 Carbon Credit",
+      "url": "https://example.com/pdf/DMS_ECC.pdf",
+      "tags": [
+        "MASE",
+        "Green Deal",
+        "Premialit\u00e0"
+      ]
+    },
+    {
+      "type": "video",
+      "title": "DMS \u2013 Demo cruscotto Grosseto",
+      "url": "https://example.com/video/demo_grosseto.mp4",
+      "thumb": "https://example.com/thumbs/demo_grosseto.jpg",
+      "tags": [
+        "Grosseto",
+        "PM",
+        "PagoPA"
+      ]
+    }
+  ]
+}
