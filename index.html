@@ -1,54 +1,92 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="it">
 <head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<title>DMS – Libreria Video & PDF</title>
-<style>
-:root{--bg:#0b1220;--card:#111a2e;--text:#f3f6ff;--muted:#a9b6d1;--brand:#2ed3ae;--brand2:#4ea6ff}
-*{box-sizing:border-box} body{margin:0;background:#0b1220;color:var(--text);font-family:Inter,system-ui,Segoe UI,Roboto,Arial,sans-serif}
-.header{position:sticky;top:0;z-index:7;background:rgba(11,18,32,.85);backdrop-filter:blur(8px);border-bottom:1px solid rgba(255,255,255,.06)}
-.wrap{max-width:1100px;margin:0 auto;padding:18px 16px}
-.brand{display:flex;align-items:center;gap:10px}.logo{width:34px;height:34px;border-radius:8px;background:linear-gradient(135deg,var(--brand),var(--brand2));display:flex;align-items:center;justify-content:center;color:#001a12;font-weight:800}
-.title{font-weight:700;font-size:18px}
-.controls{display:flex;flex-wrap:wrap;gap:10px;margin-top:12px}
-input[type="text"],input[type="url"],select{background:#0e1730;border:1px solid rgba(255,255,255,.12);color:var(--text);padding:10px 12px;border-radius:10px;outline:none;min-width:220px}
-button{background:var(--brand);color:#012016;border:0;border-radius:10px;padding:10px 14px;font-weight:700;cursor:pointer}
-button.secondary{background:transparent;border:1px solid rgba(255,255,255,.14);color:var(--text)}
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px;margin-top:18px}
-.card{background:var(--card);border:1px solid rgba(255,255,255,.06);border-radius:14px;overflow:hidden;display:flex;flex-direction:column}
-.thumb{aspect-ratio:16/9;background:#0e1730;display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:13px}
-.card .meta{padding:12px}.badge{font-size:11px;color:#001a12;background:var(--brand);padding:4px 8px;border-radius:999px;margin-right:6px;font-weight:800}
-.card h3{margin:8px 0 8px;font-size:16px;line-height:1.25}.card p{margin:0;color:#a9b6d1;font-size:13px}
-.card .actions{display:flex;gap:8px;padding:12px}
-.card a.btn{flex:1;text-align:center;text-decoration:none;background:#152241;color:var(--text);padding:10px;border-radius:10px;border:1px solid rgba(255,255,255,.08)}
-.card a.btn.primary{background:var(--brand);color:#012016;border:0}
-.helper{color:#a9b6d1;font-size:13px}.footer{border-top:1px solid rgba(255,255,255,.06);margin-top:24px}
-.kbd{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;background:#0e1730;border:1px solid rgba(255,255,255,.15);border-radius:6px;padding:2px 6px;font-size:12px}
-.small{font-size:12px;color:#a9b6d1}
-</style>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>DMS – Hub Nazionale del Commercio</title>
+  <link rel="stylesheet" href="assets/style.css"/>
 </head>
 <body>
-  <div class="header"><div class="wrap">
-    <div class="brand"><div class="logo">D</div><div class="title">DMS – Libreria di Progetto (Video & PDF)</div></div>
-    <div class="controls">
-      <input id="search" type="text" placeholder="Cerca titolo, tag o ministero…">
-      <select id="filterType"><option value="">Tutti</option><option value="video">Video</option><option value="pdf">PDF</option></select>
-      <input id="manifestUrl" type="url" placeholder="Manifest URL (es. https://.../content/manifest.json)">
-      <button id="loadManifest">Carica manifest</button>
-      <button id="exportManifest" class="secondary">Esporta manifest</button>
+  <div class="container">
+    <div class="hero card">
+      <div>
+        <h1>DMS – Hub Nazionale del Commercio</h1>
+        <p>Minisito pronto per pubblicazione (GitHub Pages). Include link al cruscotto e materiali.</p>
+      </div>
+      <div>
+        <a href="#" id="openDash" class="btn">Apri Cruscotto DMS</a>
+        <a href="?admin=true" class="btn alt">Admin</a>
+      </div>
     </div>
-    <div class="helper">Apri anche con <span class="kbd">?manifest=URL</span>. Default: <span class="kbd">/content/manifest.json</span>.</div>
-  </div></div>
-  <div class="wrap"><div class="grid" id="grid"></div><div class="footer"><div class="helper small">DMS Minisito 1.0</div></div></div>
-<script>
-const state={items:[],filtered:[]};
-function card(item){const el=document.createElement('div');el.className='card';const kind=item.type==='video'?'Video':'PDF';const badge=`<span class="badge">${kind}</span>`;const thumb=item.thumb?`<img src="${item.thumb}" class="thumb" style="object-fit:cover;width:100%">`:`<div class="thumb">Anteprima</div>`;const open=item.type==='video'?'Guarda':'Apri PDF';const src=item.source?`<a class="btn" href="${item.source}" target="_blank" rel="noopener">Sorgente</a>`:'';el.innerHTML=`${thumb}<div class="meta">${badge}<h3>${item.title||'(Senza titolo)'}</h3><p>${(item.tags||[]).join(' · ')}</p></div><div class="actions"><a class="btn primary" href="${item.url}" target="_blank" rel="noopener">${open}</a>${src}</div>`;return el;}
-function render(){const g=document.getElementById('grid');g.innerHTML='';state.filtered.forEach(x=>g.appendChild(card(x)));}
-function applyFilters(){const q=document.getElementById('search').value.trim().toLowerCase();const t=document.getElementById('filterType').value;state.filtered=state.items.filter(x=>{const hay=(x.title||'')+' '+(x.tags||[]).join(' ');const okQ=!q||hay.toLowerCase().includes(q);const okT=!t||x.type===t;return okQ&&okT});render();}
-async function loadManifest(u){try{const r=await fetch(u);if(!r.ok)throw new Error('HTTP '+r.status);const j=await r.json();if(!Array.isArray(j.items))throw new Error('Manifest invalido');state.items=j.items;applyFilters()}catch(e){alert('Errore manifest: '+e.message)}}
-document.getElementById('search').addEventListener('input',applyFilters);
-document.getElementById('filterType').addEventListener('change',applyFilters);
-document.getElementById('loadManifest').addEventListener('click',()=>{const u=document.getElementById('manifestUrl').value.trim();if(u)loadManifest(u)});
-document.getElementById('exportManifest').addEventListener('click',()=>{const blob=new Blob([JSON.stringify({generatedAt:new Date().toISOString(),items:state.items},null,2)],{type:'application/json'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='manifest.json';document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url);});
-const p=new URLSearchParams(location.search);const m=p.get('manifest')||'/content/manifest.json';document.getElementById('manifestUrl').value=m;loadManifest(m);
-</script></body></html>
+
+    <div class="grid">
+      <section class="card">
+        <h3 class="section-title">Anteprima <span class="badge">Video</span></h3>
+        <div class="video-box" id="previewBox">
+          <small class="muted">Aggiungi un file in <code>/site/assets/preview.jpg</code> oppure un video in <code>/site/videos/</code></small>
+        </div>
+        <div class="hr"></div>
+        <p><small class="muted">Suggerimento: per file .MOV pesanti, usa n8n presigned URL o host esterno.</small></p>
+      </section>
+
+      <section class="card">
+        <h3 class="section-title">Documenti <span class="badge">PDF</span></h3>
+        <ul class="list" id="pdfList">
+          <!-- Popolato da manifest.json -->
+        </ul>
+      </section>
+
+      <section class="card">
+        <h3 class="section-title">Video <span class="badge">Media</span></h3>
+        <ul class="list" id="videoList">
+          <!-- Popolato da manifest.json -->
+        </ul>
+      </section>
+    </div>
+
+    <section id="admin" class="card" style="margin-top:18px; display:none">
+      <h3>Admin</h3>
+      <p><small class="muted">Sezione visibile quando l'URL contiene <code>?admin=true</code>. Prevede collegamento a n8n per presigned upload e registrazione contenuti.</small></p>
+      <ul class="list">
+        <li>Upload via n8n (presigned URL + register)</li>
+        <li>Upload diretto su GitHub (Contents API, PAT)</li>
+        <li>Aggiornamento <code>content/manifest.json</code></li>
+      </ul>
+    </section>
+
+    <p class="footer">© 2025 DMS – Digital Market System</p>
+  </div>
+
+  <script>
+    const params = new URLSearchParams(location.search);
+    const isAdmin = params.get('admin') === 'true';
+    if (isAdmin) document.getElementById('admin').style.display = 'block';
+
+    const DASH_URL = params.get('dash') || '#'; // sostituito da Manus con URL reale
+    document.getElementById('openDash').setAttribute('href', DASH_URL);
+
+    fetch('content/manifest.json')
+      .then(r => r.json())
+      .then(data => {{ render(data); }})
+      .catch(() => {{ render({{pdfs:[],videos:[]}}); }});
+
+    function render(data){{
+      const pdfList = document.getElementById('pdfList');
+      const videoList = document.getElementById('videoList');
+      const makeItem = (t,u)=>`<li><a class="btn alt" href="${u}" download>${t}</a></li>`;
+
+      if(data.pdfs?.length){{
+        pdfList.innerHTML = data.pdfs.map(x=>makeItem(x.title||x.file, x.url||( 'docs/' + x.file ))).join('');
+      }} else {{
+        pdfList.innerHTML = '<li><small class="muted">Nessun PDF registrato.</small></li>';
+      }}
+
+      if(data.videos?.length){{
+        videoList.innerHTML = data.videos.map(x=>makeItem(x.title||x.file, x.url||( 'videos/' + x.file ))).join('');
+      }} else {{
+        videoList.innerHTML = '<li><small class="muted">Nessun video registrato.</small></li>';
+      }}
+    }}
+  </script>
+</body>
+</html>
