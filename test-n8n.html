@@ -1,0 +1,43 @@
+<!doctype html><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>DMS • n8n Webhook Tester</title>
+<style>body{font-family:system-ui;-webkit-font-smoothing:antialiased;background:#f7f9fc;margin:0;color:#1b1f23}
+header{background:linear-gradient(135deg,#005bbb,#00a1ff);color:#fff;padding:24px}
+main{max-width:900px;margin:24px auto;padding:0 16px}.card{background:#fff;border:1px solid #e6e8ee;border-radius:12px;box-shadow:0 1px 4px rgba(0,0,0,.04);padding:16px;margin:0 0 16px}
+label{font-size:13px;color:#5b6776;display:block;margin:8px 0 4px}input,select{width:100%;padding:10px 12px;border:1px solid #d7dde7;border-radius:8px;font-size:14px;box-sizing:border-box}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:12px}.btn{display:inline-block;background:#0066cc;color:#fff;border:none;border-radius:8px;padding:10px 14px;font-weight:600;cursor:pointer}
+.btn.secondary{background:#eef3fb;color:#0b5cab}.status{font-family:ui-monospace,Menlo,Consolas,monospace;background:#0b1020;color:#cde3ff;border-radius:8px;padding:12px;white-space:pre-wrap}
+</style>
+<header><h1>DMS • n8n Webhook Tester</h1><div>Onboarding / Subscribe / Events</div></header>
+<main>
+  <div class="card">
+    <div class="row">
+      <div><label>Base URL n8n</label><input id="base" value="https://dms-ai.app.n8n.cloud/webhook"></div>
+      <div><label>Origine</label><select id="src"><option>site</option><option>admin</option><option selected>test</option></select></div>
+    </div>
+    <div class="row" style="margin-top:8px">
+      <div><label>Email</label><input id="email" value="test@example.com"></div>
+      <div><label>Azienda</label><input id="company" value="Test Srl"></div>
+    </div>
+    <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap">
+      <button class="btn" onclick="runAll()">Esegui tutti i test</button>
+      <button class="btn secondary" onclick="resetLog()">Pulisci log</button>
+    </div>
+  </div>
+  <div class="card"><strong>Log</strong><div id="log" class="status" style="margin-top:8px;height:300px;overflow:auto">Pronto.</div></div>
+</main>
+<script>
+const log = m => { const el = document.getElementById('log'); el.textContent += '\n' + m; el.scrollTop = el.scrollHeight; };
+const resetLog = () => document.getElementById('log').textContent = 'Pronto.';
+const postJSON = async (u,b)=>{const r=await fetch(u,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(b)});let t=await r.text();try{t=JSON.stringify(JSON.parse(t),null,2)}catch{}return{status:r.status,ok:r.ok,body:t}};
+async function runAll(){
+  resetLog();
+  const base=document.getElementById('base').value.replace(/\/$/,''); const src=document.getElementById('src').value;
+  const email=document.getElementById('email').value; const company=document.getElementById('company').value;
+  const onb=`${base}/contabilita/onboard?plan=trial30&src=${encodeURIComponent(src)}`;
+  log(`➡️ Onboarding ${onb}`); try{const r=await postJSON(onb,{company,email,modules:["base","fatture"]}); log(`⇦ ${r.status} ${r.ok?'OK':'ERR'}\n${r.body}`)}catch(e){log('❌ '+e.message)}
+  const sub=`${base}/contabilita/subscribe`; log(`\n➡️ Subscribe ${sub}`); try{const r=await postJSON(sub,{ws:"WS-DEMO",plan:"mensile",modules:["base","fatture","report"],pay_method:"stripe"}); log(`⇦ ${r.status} ${r.ok?'OK':'ERR'}\n${r.body}`)}catch(e){log('❌ '+e.message)}
+  const evt=`${base}/contabilita/events`; log(`\n➡️ Events ${evt}`); try{const r=await postJSON(evt,{ws:"WS-DEMO",event:"doc_uploaded",file:"fattura_001.pdf"}); log(`⇦ ${r.status} ${r.ok?'OK':'ERR'}\n${r.body}`)}catch(e){log('❌ '+e.message)}
+  log('\n✅ Test conclusi');
+}
+</script>
+
