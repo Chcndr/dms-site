@@ -15,6 +15,7 @@
       </div>
       <div>
         <a href="#" id="openDash" class="btn">Apri Cruscotto DMS</a>
+        <a href="contabilita.html" class="btn">Contabilità DMS</a>
         <a href="?admin=true" class="btn alt">Admin</a>
       </div>
     </div>
@@ -47,6 +48,18 @@
     <section id="admin" class="card" style="margin-top:18px; display:none">
       <h3>Admin</h3>
       <p><small class="muted">Sezione visibile quando l'URL contiene <code>?admin=true</code>. Prevede collegamento a n8n per presigned upload e registrazione contenuti.</small></p>
+      
+      <!-- Sezione Contabilità DMS -->
+      <div class="card" style="margin: 16px 0; padding: 16px; border: 1px solid #e6e6e6; border-radius: 8px;">
+        <h4>Contabilità DMS</h4>
+        <p>Gestisci contabilità, fatture, scadenze e report direttamente dal tuo cruscotto DMS.</p>
+        <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-top: 12px;">
+          <a class="btn" href="https://dms-ai.app.n8n.cloud/webhook/contabilita/onboard?plan=trial30&src=admin">Attiva prova 30 giorni</a>
+          <a class="btn alt" href="https://contabilita.dominio.provvisorio/?from=admin">Apri Dashboard</a>
+        </div>
+        <p style="margin-top: 8px; color: #777; font-size: 12px;">Accesso riservato agli utenti registrati. Per assistenza contattaci.</p>
+      </div>
+      
       <ul class="list">
         <li>Upload via n8n (presigned URL + register)</li>
         <li>Upload diretto su GitHub (Contents API, PAT)</li>

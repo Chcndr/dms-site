@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contabilità DMS - Hub Nazionale del Commercio</title>
+    <link rel="stylesheet" href="assets/style.css">
+    <style>
+        .hero { 
+            padding: 28px 20px; 
+            border: 1px solid #e6e6e6; 
+            border-radius: 12px; 
+            margin: 16px 0; 
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        }
+        .subtitle { 
+            color: #555; 
+            max-width: 900px; 
+            font-size: 1.1em;
+            line-height: 1.6;
+        }
+        .cta-row { 
+            display: flex; 
+            gap: 10px; 
+            flex-wrap: wrap; 
+            margin-top: 12px; 
+        }
+        .btn { 
+            display: inline-block; 
+            padding: 12px 20px; 
+            border-radius: 8px; 
+            text-decoration: none; 
+            border: 2px solid #0066cc; 
+            color: #0066cc;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        .btn:hover {
+            background: #0066cc;
+            color: white;
+        }
+        .btn.alt { 
+            background: #0066cc; 
+            color: #fff; 
+            border-color: #0066cc; 
+        }
+        .btn.alt:hover {
+            background: #0052a3;
+            border-color: #0052a3;
+        }
+        .grid-2 { 
+            display: grid; 
+            grid-template-columns: 1fr 1fr; 
+            gap: 16px; 
+            margin: 16px 0; 
+        }
+        .card { 
+            border: 1px solid #e6e6e6; 
+            border-radius: 12px; 
+            padding: 20px; 
+            background: white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .list { 
+            margin: 0; 
+            padding-left: 18px; 
+        }
+        .list.tight li { 
+            margin-bottom: 6px; 
+        }
+        .list li {
+            margin-bottom: 8px;
+            line-height: 1.5;
+        }
+        .muted { 
+            color: #777; 
+            font-size: 14px; 
+            font-style: italic;
+        }
+        .steps { 
+            padding-left: 18px; 
+        }
+        .steps li {
+            margin-bottom: 10px;
+            line-height: 1.6;
+        }
+        .price-highlight {
+            color: #0066cc;
+            font-weight: bold;
+        }
+        .nav-back {
+            margin: 20px 0;
+        }
+        .nav-back a {
+            color: #0066cc;
+            text-decoration: none;
+            font-weight: 500;
+        }
+        .nav-back a:hover {
+            text-decoration: underline;
+        }
+        @media (max-width: 860px) { 
+            .grid-2 { 
+                grid-template-columns: 1fr; 
+            }
+            .cta-row {
+                flex-direction: column;
+            }
+            .btn {
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="nav-back">
+        <a href="index.html">← Torna al sito DMS</a>
+    </div>
+
+    <section class="hero">
+        <h1>Contabilità DMS</h1>
+        <p class="subtitle">Dal banco dell'ambulante alla PMI: prima nota, fatture, scadenze e report in un unico cruscotto. Moduli attivabili on-demand.</p>
+        <div class="cta-row">
+            <a class="btn" href="https://dms-ai.app.n8n.cloud/webhook/contabilita/onboard?plan=trial30&src=site">Inizia gratis 30 giorni</a>
+            <a class="btn alt" href="https://contabilita.dominio.provvisorio/">
+                Accedi alla Dashboard
+            </a>
+        </div>
+    </section>
+
+    <section class="grid-2">
+        <div class="card">
+            <h3>Perché scegliere Contabilità DMS</h3>
+            <ul class="list">
+                <li><strong>Onboarding rapido:</strong> Configurazione in 2 minuti con integrazione diretta ai mercati DMS</li>
+                <li><strong>Pagamento flessibile:</strong> Paghi solo i moduli attivi con prezzi chiari e trasparenti</li>
+                <li><strong>Controllo totale:</strong> KPI in tempo reale, upload documenti e report PDF/Excel automatici</li>
+                <li><strong>Supporto completo:</strong> Assistenza dedicata per commercianti e PMI</li>
+            </ul>
+        </div>
+        <div class="card">
+            <h3>Moduli attivabili</h3>
+            <ul class="list tight">
+                <li><strong>Base (KPI + Prima Nota light)</strong> — <span class="price-highlight">€9/mese</span></li>
+                <li><strong>Fatture (emissione + ricezione)</strong> — <span class="price-highlight">€6/mese</span></li>
+                <li><strong>Scadenze & Pagamenti</strong> — <span class="price-highlight">€5/mese</span></li>
+                <li><strong>Magazzino</strong> — <span class="price-highlight">€7/mese</span></li>
+                <li><strong>Note Spese (mobile)</strong> — <span class="price-highlight">€4/mese</span></li>
+                <li><strong>Reportistica avanzata</strong> — <span class="price-highlight">€6/mese</span></li>
+                <li><strong>Integrazioni PA/mercati (DMS sync)</strong> — <span class="price-highlight">€5/mese</span></li>
+            </ul>
+            <p class="muted">Prezzi indicativi: puoi aggiornarli quando vuoi dal tuo cruscotto.</p>
+        </div>
+    </section>
+
+    <section class="card">
+        <h3>Come funziona</h3>
+        <ol class="steps">
+            <li><strong>Richiedi l'attivazione</strong> con il trial gratuito di 30 giorni</li>
+            <li><strong>Ricevi via email</strong> il link di accesso personalizzato alla tua Dashboard</li>
+            <li><strong>Attiva i moduli</strong> che ti servono direttamente dal cruscotto</li>
+            <li><strong>Inizia subito</strong> a gestire la tua contabilità in modo professionale</li>
+        </ol>
+        
+        <div class="cta-row" style="margin-top: 20px;">
+            <a class="btn alt" href="https://dms-ai.app.n8n.cloud/webhook/contabilita/onboard?plan=trial30&src=site">Attiva ora il tuo trial gratuito</a>
+        </div>
+    </section>
+
+    <section class="card" style="margin-top: 20px; background: #f8f9fa;">
+        <h3>Hai domande?</h3>
+        <p>Il nostro team è a disposizione per supportarti nell'implementazione del sistema di contabilità più adatto alla tua attività.</p>
+        <p><strong>Email:</strong> <a href="mailto:contabilita@dms.app">contabilita@dms.app</a></p>
+        <p><strong>Telefono:</strong> <a href="tel:+390123456789">+39 012 345 6789</a></p>
+    </section>
+
+    <div class="nav-back" style="text-align: center; margin-top: 30px;">
+        <a href="index.html">← Torna al sito principale DMS</a>
+    </div>
+</body>
+</html>
+
