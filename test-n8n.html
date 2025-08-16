@@ -39,5 +39,16 @@ async function runAll(){
   const evt=`${base}/contabilita/events`; log(`\n➡️ Events ${evt}`); try{const r=await postJSON(evt,{ws:"WS-DEMO",event:"doc_uploaded",file:"fattura_001.pdf"}); log(`⇦ ${r.status} ${r.ok?'OK':'ERR'}\n${r.body}`)}catch(e){log('❌ '+e.message)}
   log('\n✅ Test conclusi');
 }
+
+// Script per persistenza localStorage
+(() => {
+  const p = new URL(location).searchParams;
+  const base = p.get('base') || localStorage.getItem('base') || 'https://dms-ai.app.n8n.cloud';
+  const token = p.get('token') || localStorage.getItem('token') || '';
+  localStorage.setItem('base', base);
+  if (token) localStorage.setItem('token', token);
+  const $b = document.getElementById('base'); if ($b) $b.value = base + '/webhook';
+  const $t = document.getElementById('token'); if ($t && token) $t.value = token;
+})();
 </script>
 

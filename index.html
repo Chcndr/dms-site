@@ -14,7 +14,7 @@
         <p>Minisito pronto per pubblicazione (GitHub Pages). Include link al cruscotto e materiali.</p>
       </div>
       <div>
-        <a href="#" id="openDash" class="btn">Apri Cruscotto DMS</a>
+        <a href="https://chcndr.github.io/dms-site/" target="_blank" id="openDash" class="btn">Apri Cruscotto DMS</a>
         <a href="contabilita.html" class="btn">Contabilità DMS</a>
         <a href="?admin=true" class="btn alt">Admin</a>
       </div>
@@ -33,31 +33,27 @@
       <section class="card">
         <h3 class="section-title">Documenti <span class="badge">PDF</span></h3>
         <ul class="list" id="pdfList">
-          <!-- Popolato da manifest.json -->
-          <li><a href="./docs/DMS_E_CLUST-ER.pdf" target="_blank">📄 DMS e CLUST-ER (PDF)</a></li>
-          <li><a href="./docs/PRESENTAZIONE_DMS.pdf" target="_blank">📄 Presentazione DMS (PDF)</a></li>
+          <!-- Link diretti ai PDF su GitHub Pages -->
+          <li><a href="https://chcndr.github.io/dms-site/docs/DMS_E_CLUST-ER.pdf" target="_blank">📄 DMS e CLUST-ER (PDF)</a></li>
+          <li><a href="https://chcndr.github.io/dms-site/docs/PRESENTAZIONE_DMS.pdf" target="_blank">📄 Presentazione DMS (PDF)</a></li>
         </ul>
       </section>
 
       <section class="card">
         <h3 class="section-title">Video <span class="badge">Media</span></h3>
         <ul class="list" id="videoList">
-          <!-- Popolato da manifest.json -->
+          <!-- Link diretti ai video su GitHub Pages -->
           <li>
             <video controls style="width:100%; max-width:480px; margin:8px 0">
-              <source src="./videos/HUB_DMS_compressed.MOV" type="video/quicktime">
-              <source src="./videos/HUB_DMS_compressed.mp4" type="video/mp4">
+              <source src="https://chcndr.github.io/dms-site/videos/HUB_DMS_compressed.MOV" type="video/quicktime">
               🎥 Hub DMS (video non supportato)
             </video>
-            <br><small>Hub DMS - Video dimostrativo</small>
           </li>
           <li>
             <video controls style="width:100%; max-width:480px; margin:8px 0">
-              <source src="./videos/Il_mio_filmato_23.MOV" type="video/quicktime">
-              <source src="./videos/Il_mio_filmato_23.mp4" type="video/mp4">
-              🎥 Filmato 23 (video non supportato)
+              <source src="https://chcndr.github.io/dms-site/site/videos/Il%20mio%20filmato%2023.MOV" type="video/quicktime">
+              🎥 Il mio filmato 23 (video non supportato)
             </video>
-            <br><small>Il mio filmato 23</small>
           </li>
         </ul>
       </section>
@@ -118,6 +114,18 @@
         videoList.innerHTML = '<li><small class="muted">Nessun video registrato.</small></li>';
       }}
     }}
+  </script>
+
+  <script>
+    (() => {
+      const p = new URL(location).searchParams;
+      const base = p.get('base') || localStorage.getItem('base') || 'https://dms-ai.app.n8n.cloud';
+      const token = p.get('token') || localStorage.getItem('token') || '';
+      localStorage.setItem('base', base);
+      if (token) localStorage.setItem('token', token);
+      const $b = document.getElementById('base'); if ($b) $b.value = base;
+      const $t = document.getElementById('token'); if ($t && token) $t.value = token;
+    })();
   </script>
 </body>
 </html>
