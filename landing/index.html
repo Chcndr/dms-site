@@ -63,20 +63,23 @@ radial-gradient(900px 800px at 120% 10%,rgba(11,95,255,.12),transparent 60%),var
       <h3>Video</h3>
 
       <!-- Video 1 -->
-      <video class="video" id="vid1" controls muted playsinline poster="./assets/italy-gemello.png">
+      <video class="video" id="vid1" controls muted playsinline poster="./assets/italy.svg">
         <source src="./videos/teaser-hub-dms.mp4" type="video/mp4">
       </video>
 
       <div style="height:12px"></div>
 
       <!-- Video 2 -->
-      <video class="video" id="vid2" controls muted playsinline poster="./assets/italy-gemello.png">
+      <video class="video" id="vid2" controls muted playsinline poster="./assets/italy.svg">
         <source src="./videos/teaser-riaccendiamo.mp4" type="video/mp4">
       </video>
 
-      <div class="list" style="margin-top:10px">
-        <a href="./mindmap.html">🧠 Apri la mappa neurale</a>
-      </div>
+      <div style="height:12px"></div>
+
+      <!-- Video 3 -->
+      <video class="video" id="vid3" controls muted playsinline poster="./assets/italy.svg">
+        <source src="./videos/teaser-altro.mp4" type="video/mp4">
+      </video>
     </div>
   </div>
 </div>
@@ -84,23 +87,67 @@ radial-gradient(900px 800px at 120% 10%,rgba(11,95,255,.12),transparent 60%),var
 <!-- Modal iniziale -->
 <div class="modal" id="modal">
   <div class="box">
-    <video id="spot" autoplay muted playsinline controls poster="./assets/italy-gemello.png">
+    <video id="spot" autoplay muted playsinline controls poster="./assets/italy.svg">
       <!-- Slot per Video 23 -->
       <source src="./videos/video-hero.mp4" type="video/mp4">
       <!-- Fallback temporaneo se non caricato -->
       <source src="./videos/teaser-hub-dms.mp4" type="video/mp4">
     </video>
     <div class="actions">
-      <a class="a" href="./mindmap.html">Approfondisci →</a>
       <a class="a" href="#" onclick="closeModal();return false;">Chiudi</a>
     </div>
   </div>
 </div>
 
 <script>
-function openModal(){ document.getElementById('modal').classList.add('show'); }
-function closeModal(){ document.getElementById('modal').classList.remove('show'); }
-window.addEventListener('load',()=>{ openModal(); const v=document.getElementById('spot'); if(v) v.play().catch(()=>{}); });
+window.DMS_PUBLIC = {
+  // PDF che DEVONO essere cliccabili ora (nome file):
+  pdfs: ["hub-nazionale.pdf", "dms-e-cluster.pdf"],
+
+  // Pulsanti/route (true=attivo, false=disabilitato):
+  routes: { map: true, dashboard: false, accounting: false, admin: false }
+};
+</script>
+
+<script>
+// Disabilita i link ai PDF non whitelisted
+(function(){
+  const pub = (window.DMS_PUBLIC && window.DMS_PUBLIC.pdfs) || [];
+  document.querySelectorAll('a[href^="./docs/"]').forEach(a=>{
+    const name = a.getAttribute('href').split('/').pop();
+    if (!pub.includes(name)){
+      a.classList.add('is-disabled');
+      a.addEventListener('click', e=>{ e.preventDefault(); });
+      a.insertAdjacentHTML('beforeend',' <span style="opacity:.6">· presto</span>');
+    }
+  });
+  // Disabilita CTA non pubbliche (se presenti)
+  const routes = (window.DMS_PUBLIC && window.DMS_PUBLIC.routes) || {};
+  if (routes.map === false){
+    const m = document.querySelector('a[href="./mindmap.html"]');
+    if (m){ m.classList.add('is-disabled'); m.addEventListener('click', e=>e.preventDefault()); }
+  }
+})();
+</script>
+<style>
+.is-disabled{opacity:.55; pointer-events:none; filter:grayscale(20%);}
+</style>
+
+<script>
+const modal = document.getElementById('modal');
+const spot  = document.getElementById('spot');
+
+function openModal(){
+  modal.classList.add('show');
+  if (spot){ spot.currentTime = 0; spot.muted = true; spot.play().catch(()=>{}); }
+}
+function closeModal(){
+  if (spot){ spot.pause(); spot.currentTime = 0; }
+  modal.classList.remove('show');
+}
+modal.addEventListener('click', e => { if (e.target === modal) closeModal(); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+window.addEventListener('load', openModal);
 </script>
 </body>
 </html>
