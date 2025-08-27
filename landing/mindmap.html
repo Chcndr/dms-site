@@ -34,20 +34,20 @@ svg{width:100%;height:auto;display:block;border-radius:16px;border:1px solid rgb
 
 <script>
 const NODES = [
-  ["Riaccendiamo i Mercati","./docs/dms-riaccendiamo.pdf"],
-  ["Hub Nazionale del Commercio","./docs/hub-nazionale.pdf"],
-  ["Dossier Nazionale","./docs/dossier-nazionale.pdf"],
-  ["DMS & CLUST-ER","./docs/dms-e-cluster.pdf"],
-  ["DMS ECC (narrativo)","./docs/dms-ecc.pdf"],
-  ["DMS ECC 2 (tecnico)","./docs/dms-ecc-2.pdf"],
-  ["Carbon Credit – Logica","./docs/logica-carbon-credit.pdf"],
-  ["Equilibrio Ecosostenibile","./docs/equilibrio-ecosostenibile.pdf"],
-  ["Passaporto EU","./docs/passaporto-eu.pdf"],
-  ["DPP Explained","./docs/dpp-explained.pdf"],
-  ["Scenario Futuro","./docs/scenario-futuro.pdf"],
-  ["Gemello DMS","./docs/gemello-dms.pdf"],
-  ["Ecosistema Costi PA","./docs/ecosistema-costi-pa.pdf"],
-  ["Analisi & Soluzione","./docs/analisi-soluzione-dms.pdf"]
+  {label:"Riaccendiamo i Mercati", href:"./docs/dms-riaccendiamo.pdf", pub:false},
+  {label:"Hub Nazionale del Commercio", href:"./docs/hub-nazionale.pdf", pub:true},
+  {label:"DMS & CLUST-ER", href:"./docs/dms-e-cluster.pdf", pub:true},
+  {label:"Dossier Nazionale", href:"./docs/dossier-nazionale.pdf", pub:false},
+  {label:"DMS ECC (narrativo)", href:"./docs/dms-ecc.pdf", pub:false},
+  {label:"DMS ECC 2 (tecnico)", href:"./docs/dms-ecc-2.pdf", pub:false},
+  {label:"Carbon Credit – Logica", href:"./docs/logica-carbon-credit.pdf", pub:false},
+  {label:"Equilibrio Ecosostenibile", href:"./docs/equilibrio-ecosostenibile.pdf", pub:false},
+  {label:"Passaporto EU", href:"./docs/passaporto-eu.pdf", pub:false},
+  {label:"DPP Explained", href:"./docs/dpp-explained.pdf", pub:false},
+  {label:"Scenario Futuro", href:"./docs/scenario-futuro.pdf", pub:false},
+  {label:"Gemello DMS", href:"./docs/gemello-dms.pdf", pub:false},
+  {label:"Ecosistema Costi PA", href:"./docs/ecosistema-costi-pa.pdf", pub:false},
+  {label:"Analisi & Soluzione", href:"./docs/analisi-soluzione-dms.pdf", pub:false}
 ];
 const svg = document.getElementById('map'); const cx=600, cy=430, r=290;
 function E(n,a){const e=document.createElementNS('http://www.w3.org/2000/svg',n);for(const k in a)e.setAttribute(k,a[k]);return e;}
@@ -57,16 +57,18 @@ svg.appendChild(E('g',{transform:`translate(${cx-160},${cy-70})`,class:'center'}
 NODES.forEach((n,i)=>{
   const a=(2*Math.PI*i/NODES.length)-Math.PI/2, x=cx+r*Math.cos(a), y=cy+r*Math.sin(a);
   svg.appendChild(E('line',{x1:cx,y1:cy,x2:x,y2:y,stroke:'#a6e3eb','stroke-width':1.2,'stroke-opacity':.6}));
+  const allowed = n.pub === true;
   const g=E('g',{class:'node',transform:`translate(${x-115},${y-30})`});
-  g.appendChild(E('rect',{rx:12,ry:12,width:230,height:60,class:'box'}));
-  const t=E('text',{x:115,y:30,class:'label'}); t.textContent=n[0]; g.appendChild(t);
-  g.addEventListener('click',()=>location.href=n[1]); svg.appendChild(g);
+  g.appendChild(E('rect',{rx:12,ry:12,width:230,height:60,class:'box',opacity: allowed? '1':'0.55'}));
+  const t=E('text',{x:115,y:30,class:'label',fill: allowed? '#f3fbff':'#c6d9e0'}); t.textContent=n.label; g.appendChild(t);
+  if (allowed){ g.addEventListener('click',()=>location.href=n.href); }
+  svg.appendChild(g);
 });
 const rotor=E('g',{transform:`translate(${cx},${cy})`});
 rotor.innerHTML=`<circle r="${r-15}" fill="none" stroke="#a6e3eb" stroke-dasharray="6,6" stroke-opacity=".7"/><g class="rotor"><path d="M 0 -${r-15} l -8 16 l 16 0 z" fill="#14b8a6"/></g>`;
 svg.appendChild(rotor);
 // fallback badges
-document.getElementById('fallback').innerHTML = NODES.map(n=>`<span class="badge"><a href="${n[1]}">${n[0]}</a></span>`).join('');
+document.getElementById('fallback').innerHTML = NODES.map(n=>`<span class="badge"><a href="${n.href}" ${n.pub ? '' : 'style="opacity:.55;pointer-events:none;"'}>${n.label}</a></span>`).join('');
 </script>
 </body>
 </html>
