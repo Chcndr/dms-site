@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>DMS — Hub di Prossimità</title>
+<style>
+:root{--bg:#071a1d;--ink:#e8fbff;--muted:#9bd6de;--panel:rgba(7,26,29,.7);--stroke:rgba(173,234,240,.18);--accent:#14b8a6;--accent2:#0b5fff}
+*{box-sizing:border-box} html,body{height:100%} body{margin:0;color:var(--ink);font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;background:
+radial-gradient(1200px 700px at 20% -10%,rgba(20,184,166,.10),transparent 60%),
+radial-gradient(900px 800px at 120% 10%,rgba(11,95,255,.12),transparent 60%),var(--bg)}
+.bg-italy{position:fixed;inset:0;z-index:-1;pointer-events:none;opacity:.18;background:center/contain no-repeat url('./assets/italy.svg')}
+.container{max-width:1200px;margin:0 auto;padding:26px 18px 80px}
+.header{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.brand{display:flex;align-items:center;gap:12px}
+.brand .logo{width:20px;height:20px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2))}
+.brand h1{margin:0;font-size:22px;letter-spacing:.2px}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:10px 14px;border-radius:12px;color:var(--ink);text-decoration:none;font-weight:600;background:linear-gradient(180deg,#0b2730,#092029);border:1px solid var(--stroke)}
+.sub{color:var(--muted);margin:6px 0 14px}
+.card{background:var(--panel);border:1px solid var(--stroke);border-radius:16px;padding:16px;backdrop-filter:blur(6px)}
+.grid{display:grid;gap:16px;grid-template-columns:1fr} @media(min-width:960px){.grid{grid-template-columns:1.2fr .8fr}}
+.list a{display:flex;gap:8px;padding:10px;border-radius:10px;text-decoration:none;color:#cfe0ff;border:1px solid #27324a;margin-bottom:8px}
+.video{width:100%;aspect-ratio:16/9;background:#000;border-radius:10px;border:1px solid #27324a}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.75);display:none;align-items:center;justify-content:center;padding:18px}
+.modal.show{display:flex} .modal .box{background:#061317;border:1px solid var(--stroke);border-radius:16px;max-width:920px;width:100%}
+.modal video{width:100%;height:auto;border-radius:16px}
+.modal .actions{display:flex;gap:8px;justify-content:flex-end;padding:10px}
+.a{background:#0b2730;border:1px solid #2d6a73;color:var(--ink);padding:8px 12px;border-radius:10px;text-decoration:none}
+</style>
+</head>
+<body>
+<div class="bg-italy"></div>
+<div class="container">
+  <div class="header">
+    <div class="brand"><div class="logo"></div><h1>DMS — Hub di Prossimità</h1></div>
+    <div>
+      <a class="btn" href="#" onclick="openModal();return false;">🎬 Spot</a>
+      <a class="btn" href="./mindmap.html">🧠 Mappa</a>
+    </div>
+  </div>
+  <p class="sub">Gemello digitale 🇮🇹, pagamenti, Once-Only, ECC. Guarda lo spot, poi apri la mappa neurale.</p>
+
+  <div class="grid">
+    <div class="card">
+      <h3>Documenti (PDF)</h3>
+      <div class="list">
+        <a href="./docs/dms-riaccendiamo.pdf">📄 DMS – Riaccendiamo i Mercati</a>
+        <a href="./docs/hub-nazionale.pdf">📄 Hub Nazionale del Commercio</a>
+        <a href="./docs/dossier-nazionale.pdf">📄 Dossier Nazionale</a>
+        <a href="./docs/dms-e-cluster.pdf">📄 DMS & CLUST-ER</a>
+        <a href="./docs/dms-ecc.pdf">📄 DMS ECC (narrativo)</a>
+        <a href="./docs/dms-ecc-2.pdf">📄 DMS ECC 2 (tecnico)</a>
+        <a href="./docs/logica-carbon-credit.pdf">📄 Carbon Credit – Logica</a>
+        <a href="./docs/equilibrio-ecosostenibile.pdf">📄 Equilibrio Ecosostenibile</a>
+        <a href="./docs/passaporto-eu.pdf">📄 Passaporto EU</a>
+        <a href="./docs/dpp-explained.pdf">📄 DPP Explained</a>
+        <a href="./docs/scenario-futuro.pdf">📄 Scenario Futuro</a>
+        <a href="./docs/gemello-dms.pdf">📄 Gemello DMS</a>
+        <a href="./docs/ecosistema-costi-pa.pdf">📄 Ecosistema Costi PA</a>
+        <a href="./docs/analisi-soluzione-dms.pdf">📄 Analisi & Soluzione</a>
+      </div>
+    </div>
+    <div class="card">
+      <h3>Video</h3>
+      <video class="video" id="vid" controls muted playsinline poster="./assets/italy.svg">
+        <source src="./videos/teaser-hub-dms.mp4" type="video/mp4">
+      </video>
+      <div class="list" style="margin-top:10px">
+        <a href="./mindmap.html">🧠 Apri la mappa neurale</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal iniziale -->
+<div class="modal" id="modal">
+  <div class="box">
+    <video id="spot" autoplay muted playsinline controls poster="./assets/italy.svg">
+      <source src="./videos/teaser-hub-dms.mp4" type="video/mp4">
+    </video>
+    <div class="actions">
+      <a class="a" href="./mindmap.html">Approfondisci →</a>
+      <a class="a" href="#" onclick="closeModal();return false;">Chiudi</a>
+    </div>
+  </div>
+</div>
+
+<script>
+function openModal(){ document.getElementById('modal').classList.add('show'); }
+function closeModal(){ document.getElementById('modal').classList.remove('show'); }
+window.addEventListener('load',()=>{ openModal(); const v=document.getElementById('spot'); if(v) v.play().catch(()=>{}); });
+</script>
+</body>
+</html>
+
