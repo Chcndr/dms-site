@@ -8,7 +8,7 @@
 *{box-sizing:border-box} html,body{height:100%} body{margin:0;color:var(--ink);font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;background:
 radial-gradient(1200px 700px at 20% -10%,rgba(20,184,166,.10),transparent 60%),
 radial-gradient(900px 800px at 120% 10%,rgba(11,95,255,.12),transparent 60%),var(--bg)}
-.bg-italy{position:fixed;inset:0;z-index:-1;pointer-events:none;opacity:.22;background:center/contain no-repeat url('./assets/italy-gemello.png');background-position: calc(50% + 28vw) calc(50% + 5vh)}
+..bg-italy{position:fixed;inset:0;z-index:-1;pointer-events:none;opacity:.24;background:center/contain no-repeat url('./assets/italy-gemello.png');background-position: calc(50% + 28vw) calc(50% + 5vh)}+ 5vh)}
 .container{max-width:1200px;margin:0 auto;padding:26px 18px 80px}
 .header{display:flex;align-items:center;justify-content:space-between;gap:12px}
 .brand{display:flex;align-items:center;gap:12px}
@@ -83,8 +83,7 @@ radial-gradient(900px 800px at 120% 10%,rgba(11,95,255,.12),transparent 60%),var
 
 <!-- Modal iniziale -->
 <div class="modal" id="modal">
-  <div class="box">
-    <video id="spot" autoplay muted playsinline controls poster="./assets/italy-gemello.png">
+  <div class="box"    <video id="spot" autoplay muted playsinline controls poster="./assets/italy-gemello.png">ello.png">
       <!-- Slot per Video 23 -->
       <source src="./videos/video-hero.mp4" type="video/mp4">
       <!-- Fallback temporaneo se non caricato -->
