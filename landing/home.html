@@ -69,6 +69,23 @@
   @media (max-width: 640px){
     .top-right h1{font-size:18px}
   }
+
+  /* Sfondo Italia "Gemello" sotto a tutto */
+  body::before{
+    content:"";
+    position:fixed; inset:0;
+    background:
+      radial-gradient(1200px 800px at 60% 20%, rgba(255,255,255,.05), transparent 60%),
+      url("./assets/italy-gemello.png?v=4") no-repeat center 58%/min(1100px, 92vmin);
+    opacity:.24;
+    filter: drop-shadow(0 8px 18px rgba(0,0,0,.35));
+    pointer-events:none;   /* non blocca i click */
+    z-index:0;            /* sta dietro a tutto */
+  }
+  /* garantisci che layer, nodi e viewport stiano sopra */
+  #ellipseLayer{ z-index:1; }
+  .node{ z-index:2; }
+  #viewport{ z-index:3; }
 </style>
 </head>
 <body>
@@ -83,8 +100,8 @@
     <small></small>
   </div>
 
-  <!-- logo -->
-  <div class="logo-bl"><img src="./assets/logo-dms-beige.png" alt="DMS logo"></div>
+  <!-- logo rimosso temporaneamente -->
+  <!-- <div class="logo-bl"><img src="./assets/logo-dms-beige.png" alt="DMS logo"></div> -->
 
   <!-- stage -->
   <div id="stage" class="mid">
