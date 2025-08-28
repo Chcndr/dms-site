@@ -1,0 +1,270 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>DMS — Gemello Digitale del Commercio</title>
+<style>
+  :root{
+    --bg-a:#0e2d38; --bg-b:#155268;
+    --ink:#dde2e4; /* beige/grigio DMS */
+    --accent:#46a0bd; --panel:#0c2028;
+    --btnFill:rgba(20,80,100,.68); --btnStroke:rgba(190,230,240,.95);
+  }
+  html,body{height:100%;margin:0;background:radial-gradient(1200px 800px at 20% 10%, rgba(60,200,255,.18), transparent 60%),
+                                radial-gradient(900px 600px at 92% 24%, rgba(0,180,210,.16), transparent 60%),
+                                linear-gradient(180deg,var(--bg-b),var(--bg-a));
+              color:var(--ink); font:400 16px/1.4 system-ui,-apple-system,Segoe UI,Roboto,Arial}
+  body::before{
+    content:""; position:fixed; inset:0; z-index:0;
+    background:url('./assets/italy-neon-bg.png') center/cover no-repeat;
+    opacity:.8; pointer-events:none;
+  }
+
+  /* header */
+  .top-left{position:fixed; left:2vw; top:2vh; display:flex; gap:.8vw; z-index:5}
+  .top-left a{display:inline-block; padding:.5rem .9rem; border-radius:12px;
+              border:2px solid var(--accent); background:var(--btnFill); color:var(--ink);
+              text-decoration:none; font-weight:700}
+  .top-right{position:fixed; right:2vw; top:2vh; text-align:right; z-index:5}
+  .top-right h1{margin:0; font-weight:800; letter-spacing:.02em}
+  .top-right small{opacity:.85}
+
+  /* logo */
+  .logo-bl{position:fixed; left:2vw; bottom:2vh; z-index:5}
+  .logo-bl img{display:block; width:calc( (var(--btnW,180px))*2 + 0.8vw ); height:auto; filter:drop-shadow(0 6px 8px rgba(0,0,0,.35));}
+
+  /* stage */
+  #stage{position:relative; width:100vw; height:100vh; z-index:1}
+  .mid{position:absolute; left:50%; top:50%; transform:translate(-50%,-50%);}
+
+  /* viewport centrale (video/iframe) */
+  #viewport{position:absolute; border-radius:22px; background:rgba(12,32,40,.92);
+            outline:2px solid var(--accent); box-shadow:8px 8px 20px rgba(0,0,0,.4); z-index:3;
+            overflow:hidden}
+  #viewport video, #viewport iframe{width:100%; height:100%; display:block; border:0}
+
+  /* layer ellisse (ticks + lancetta sotto al video) */
+  #ellipseLayer{position:absolute; inset:0; z-index:2; pointer-events:none}
+  #hand{stroke:var(--ink); stroke-width:12; stroke-linecap:round; filter:drop-shadow(0 1px 1px rgba(0,0,0,.6))}
+  .center-dot{fill:rgba(0,0,0,.55); stroke:var(--ink); stroke-width:3}
+
+  /* pulsanti intorno all'ellisse */
+  .node{position:absolute; width:var(--btnW, 180px); height:var(--btnW, 180px);
+        border-radius:14px; background:var(--btnFill); border:2px solid var(--btnStroke);
+        display:flex; align-items:center; justify-content:center; color:var(--ink);
+        font-weight:700; text-decoration:none; z-index:4; user-select:none}
+  .node.disabled{opacity:.45; filter:saturate(.6); pointer-events:none}
+  .tick{stroke:rgba(185,240,255,.9); stroke-width:3}
+
+  /* responsive */
+  @media (max-width: 920px){
+    :root{ --btnW: 120px; }
+  }
+  @media (max-width: 640px){
+    :root{ --btnW: 88px; }
+    .top-right h1{font-size:18px}
+  }
+</style>
+</head>
+<body>
+
+  <!-- header -->
+  <div class="top-left">
+    <a href="./index.html">🎬 Spot</a>
+    <a href="./mindmap.html">🧠 Mappa</a>
+  </div>
+  <div class="top-right">
+    <h1>GEMELLO DIGITALE<br>DEL COMMERCIO</h1>
+    <small></small>
+  </div>
+
+  <!-- logo -->
+  <div class="logo-bl"><img src="./assets/logo-dms-beige.png" alt="DMS logo"></div>
+
+  <!-- stage -->
+  <div id="stage" class="mid">
+    <!-- layer SVG con ticks + lancetta (sotto al video) -->
+    <svg id="ellipseLayer" width="100%" height="100%" preserveAspectRatio="xMidYMid slice"></svg>
+
+    <!-- viewport centrale -->
+    <div id="viewport"></div>
+
+    <!-- 12 pulsanti su ellisse -->
+    <a class="node" data-i="0">•</a>
+    <a class="node" data-i="1">•</a>
+    <a class="node" data-i="2">•</a>
+    <a class="node" data-i="3">•</a>
+    <a class="node" data-i="4">•</a>
+    <a class="node" data-i="5">•</a>
+    <a class="node" data-i="6">•</a>
+    <a class="node" data-i="7">•</a>
+    <a class="node" data-i="8">•</a>
+    <a class="node" data-i="9">•</a>
+    <a class="node" data-i="10">•</a>
+    <a class="node" data-i="11">•</a>
+  </div>
+
+<script>
+(function(){
+  // ------- parametri ellisse / layout
+  const stage   = document.getElementById('stage');
+  const svg     = document.getElementById('ellipseLayer');
+  const view    = document.getElementById('viewport');
+  const nodes   = [...document.querySelectorAll('.node')];
+
+  // mapping contenuti (solo alcuni attivi, gli altri "· presto")
+  const CONTENT = [
+    {type:'pdf', url:'./docs/hub-nazionale.pdf'},
+    {type:'pdf', url:'./docs/dms-e-cluster.pdf'},
+    {type:'video', url:'./videos/teaser-hub-dms.mp4'},
+    {type:'video', url:'./videos/video-hero.mp4'},
+    null,null,null,null,null,null,null,null
+  ];
+
+  // utility: crea video hero (default)
+  function createHero(){
+    const v = document.createElement('video');
+    v.src = './videos/video-hero.mp4';
+    v.autoplay = true; v.loop = true; v.muted = true; v.playsInline = true;
+    v.setAttribute('playsinline','');
+    v.style.background = '#000';
+    return v;
+  }
+
+  // carica contenuto nel viewport (video o pdf in iframe)
+  function loadContent(item){
+    view.innerHTML = '';
+    if(!item){ // presto
+      const p = document.createElement('div');
+      p.style.display='grid'; p.style.placeItems='center'; p.style.height='100%';
+      p.innerHTML = `<div style="opacity:.8;font-weight:700;color:#cfe8f0">· presto</div>`;
+      view.appendChild(p);
+      return;
+    }
+    if(item.type === 'video'){
+      const v = document.createElement('video');
+      v.src = item.url; v.controls = true; v.autoplay = true; v.muted = false; v.playsInline = true;
+      v.setAttribute('playsinline','');
+      view.appendChild(v);
+    } else if(item.type === 'pdf'){
+      const f = document.createElement('iframe');
+      f.src = item.url + '#view=FitH';
+      view.appendChild(f);
+    }
+  }
+
+  // layout responsivo: calcola ellisse, posizione nodi, dimensione viewport 16:9
+  function layout(){
+    const W = window.innerWidth, H = window.innerHeight;
+    const cx = W/2, cy = H*0.50;
+
+    // semiassi (versione "slight"): tengono tutto dentro allo schermo
+    const a = Math.min(W*0.47, W/2 - 24);
+    const b = Math.min(H*0.35, H*0.54);
+
+    // pulsanti
+    const btnW = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--btnW')) || 180;
+
+    // viewport 16:9 che stia nell'ellisse interna
+    const innerA = a - btnW*0.55;
+    const innerB = b - btnW*0.55;
+
+    let vw = W*0.64, vh = vw*9/16, maxH = H*0.44;
+    if(vh > maxH){ vh = maxH; vw = vh*16/9; }
+    let k = 1.0;
+    while( (((vw*k)/2)**2)/(innerA**2) + (((vh*k)/2)**2)/(innerB**2) > 1.0 && k>0.4 ){ k -= 0.02; }
+    vw = vw*k; vh = vh*k;
+
+    // applica viewport
+    view.style.width  = vw+'px';
+    view.style.height = vh+'px';
+    view.style.left   = (cx - vw/2)+'px';
+    view.style.top    = (cy - vh/2)+'px';
+
+    // disegna ticks + lancetta (sotto al video)
+    svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
+    svg.innerHTML = '';
+    const g = document.createElementNS('http://www.w3.org/2000/svg','g');
+    svg.appendChild(g);
+
+    // ticks ore
+    for(let i=0;i<12;i++){
+      const t = -Math.PI/2 + (2*Math.PI*i/12);
+      const ix = cx + (a-18)*Math.cos(t), iy = cy + (b-18)*Math.sin(t);
+      const ex = cx + a*Math.cos(t),      ey = cy + b*Math.sin(t);
+      const line = document.createElementNS('http://www.w3.org/2000/svg','line');
+      line.setAttribute('x1', ix); line.setAttribute('y1', iy);
+      line.setAttribute('x2', ex); line.setAttribute('y2', ey);
+      line.setAttribute('class','tick');
+      g.appendChild(line);
+    }
+
+    // centro
+    const c = document.createElementNS('http://www.w3.org/2000/svg','circle');
+    c.setAttribute('cx', cx); c.setAttribute('cy', cy); c.setAttribute('r', 10); c.setAttribute('class','center-dot');
+    g.appendChild(c);
+
+    // lancetta (linea + punta)
+    const hand = document.createElementNS('http://www.w3.org/2000/svg','line');
+    hand.setAttribute('id','hand'); hand.setAttribute('x1', cx); hand.setAttribute('y1', cy);
+    hand.setAttribute('x2', cx); hand.setAttribute('y2', cy);
+    g.appendChild(hand);
+
+    const tip = document.createElementNS('http://www.w3.org/2000/svg','polygon');
+    tip.setAttribute('id','handTip'); tip.setAttribute('fill', getComputedStyle(document.documentElement).getPropertyValue('--ink'));
+    g.appendChild(tip);
+
+    // posiziona i 12 pulsanti
+    nodes.forEach((el,i)=>{
+      const t = -Math.PI/2 + (2*Math.PI*i/12);
+      const x = cx + a*Math.cos(t) - btnW/2;
+      const y = cy + b*Math.sin(t) - btnW/2;
+      el.style.left = x+'px'; el.style.top = y+'px';
+      const item = CONTENT[i];
+      el.textContent = item ? (item.type==='pdf'?'PDF':'Video') : '•';
+      if(!item) el.classList.add('disabled'); else el.classList.remove('disabled');
+    });
+
+    // animazione lancetta lungo ellisse (sotto al video)
+    let start = null;
+    function anim(ts){
+      if(!start) start = ts;
+      const elapsed = ts - start;
+      const T = 12000; // giro completo ~12s
+      const theta = -Math.PI/2 + 2*Math.PI*( (elapsed % T)/T );
+      const px = cx + a*Math.cos(theta)*0.95;
+      const py = cy + b*Math.sin(theta)*0.95;
+      hand.setAttribute('x2', px); hand.setAttribute('y2', py);
+
+      // punta triangolare
+      const bx = cx + a*Math.cos(theta)*0.86;
+      const by = cy + b*Math.sin(theta)*0.86;
+      const nx = -Math.sin(theta), ny = Math.cos(theta);
+      const tipW = 18, tipL = 30;
+      tip.setAttribute('points', `${px},${py} ${bx+nx*tipW},${by+ny*tipW} ${bx-nx*tipW},${by-ny*tipW}`);
+
+      requestAnimationFrame(anim);
+    }
+    requestAnimationFrame(anim);
+  }
+
+  // click: carica contenuto e ferma eventuale hero
+  nodes.forEach(el=>{
+    el.addEventListener('click', ()=>{
+      const idx = +el.dataset.i;
+      loadContent(CONTENT[idx]);
+    });
+  });
+
+  // primo load: video hero in autoplay
+  view.appendChild(createHero());
+
+  // layout iniziale + su resize
+  window.addEventListener('resize', layout, {passive:true});
+  layout();
+})();
+</script>
+</body>
+</html>
+
