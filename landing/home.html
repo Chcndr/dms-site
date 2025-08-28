@@ -57,34 +57,14 @@
     filter:drop-shadow(0 0 10px rgba(92,242,255,.08));
   }
 
-  /* stile per QUALSIASI path/polilinea dentro l'SVG caricato */
+  /* stile per italy-clean.svg */
   .bg-italy-anim svg{ color:var(--neon); }
-  .bg-italy-anim svg path,
   .bg-italy-anim svg polyline,
-  .bg-italy-anim svg polygon{
-    fill: none !important;
-    stroke: currentColor !important;
-    stroke-width: 1.2;
-    stroke-linecap: round;
-    stroke-linejoin: round;
-    opacity:.9;
-  }
-  /* gruppi "random" eventuali nascosti (safety) */
-  .bg-italy-anim svg #scribbles,
-  .bg-italy-anim svg .scribbles,
-  .bg-italy-anim svg #random,
-  .bg-italy-anim svg .random { display:none !important; }
+  .bg-italy-anim svg line{ fill:none; stroke:currentColor; stroke-width:1.4; stroke-linecap:round; stroke-linejoin:round; }
 
-  /* breathing finale del tratto (molto tenue) */
-  .bg-italy-anim.lit svg path,
-  .bg-italy-anim.lit svg polyline,
-  .bg-italy-anim.lit svg polygon{
-    animation: breath 6s ease-in-out infinite;
-  }
-  @keyframes breath{
-    0%,100%{ opacity:.24; filter:blur(0) }
-    50%     { opacity:.34; filter:blur(.2px) }
-  }
+  /* breathing leggero dopo il draw */
+  .bg-italy-anim.lit svg polyline{ animation:breath 6s ease-in-out infinite; }
+  @keyframes breath{ 0%,100%{opacity:.24;filter:blur(0)} 50%{opacity:.34;filter:blur(.2px)} }
 
   /* spotlight che segue il mouse (mix-blend screen) */
   .bg-italy-anim .spotlight{
@@ -259,9 +239,7 @@
   @media (prefers-reduced-motion: reduce){
     .home-orologio .node, .home-orologio .node::before{ transition:none !important; }
     .bg-italy-anim .bg-gradient{ animation:none; }
-    .bg-italy-anim.lit svg path,
-    .bg-italy-anim.lit svg polyline,
-    .bg-italy-anim.lit svg polygon{ animation:none; }
+    .bg-italy-anim.lit svg polyline{ animation:none; }
     .bg-italy-anim .spotlight{ display:none; }
   }
 </style>
@@ -271,8 +249,7 @@
   <!-- BACKGROUND ITALIA ANIMATA -->
   <div class="bg-italy-anim" aria-hidden="true">
     <div class="bg-gradient"></div>
-    <!-- usiamo l'SVG già presente: italy.svg -->
-    <object id="italySVG" type="image/svg+xml" data="./assets/italy.svg"></object>
+    <object id="italySVG" type="image/svg+xml" data="./assets/italy-clean.svg?v=clean1"></object>
     <div class="spotlight"></div>
   </div>
 
@@ -459,67 +436,40 @@ ns.forEach(n=>{ if(n.getAttribute('aria-disabled')==='true') return;
 
 <script>
 (function(){
-  const container = document.querySelector('.bg-italy-anim');
+  const wrapper = document.querySelector('.bg-italy-anim');
   const obj = document.getElementById('italySVG');
-  const spot = container.querySelector('.spotlight');
+  const spot = wrapper.querySelector('.spotlight');
 
-  function drawAll(doc){
-    // nascondi eventuali gruppi "random"
-    ['#scribbles','.scribbles','#random','.random'].forEach(sel=>{
-      doc.querySelectorAll(sel).forEach(n=> n.style.display='none');
-    });
-
-    const segs = doc.querySelectorAll('path, polyline, polygon');
-    if(!segs.length) return;
-
-    // prepara tutti i segmenti per il "draw"
+  function draw(doc){
+    const segs = doc.querySelectorAll('polyline, line');
     segs.forEach((el,i)=>{
-      try{
-        const L = (typeof el.getTotalLength === 'function') ? el.getTotalLength() : 800;
-        el.style.strokeDasharray  = L;
-        el.style.strokeDashoffset = L;
-        el.style.transition = `stroke-dashoffset 1100ms ease ${i*70}ms`;
-      }catch(e){
-        // fallback
-        el.style.opacity = .28;
-      }
+      const L = (typeof el.getTotalLength === 'function') ? el.getTotalLength() : 600;
+      el.style.strokeDasharray=L;
+      el.style.strokeDashoffset=L;
+      el.style.transition=`stroke-dashoffset 1100ms ease ${i*60}ms`;
     });
-
-    // avvia l'animazione
-    requestAnimationFrame(()=>{
-      segs.forEach(el=> el.style.strokeDashoffset = 0);
-    });
-
-    // stato finale: breathing
-    setTimeout(()=> container.classList.add('lit'), 1400);
+    requestAnimationFrame(()=> segs.forEach(el=> el.style.strokeDashoffset=0));
+    setTimeout(()=> wrapper.classList.add('lit'), 1400);
   }
 
-  // spotlight mouse (desktop)
-  function enableSpotlight(){
-    let raf;
-    function move(e){
-      const x = e.clientX || (e.touches && e.touches[0].clientX);
-      const y = e.clientY || (e.touches && e.touches[0].clientY);
-      if(!x && !y) return;
-      if(!raf){
-        raf = requestAnimationFrame(()=>{
-          container.style.setProperty('--mx', x+'px');
-          container.style.setProperty('--my', y+'px');
-          raf = null;
-        });
-      }
-      spot.style.opacity = .9;
+  obj.addEventListener('load', ()=> draw(obj.contentDocument));
+  if (obj.contentDocument) draw(obj.contentDocument);
+
+  // spotlight (desktop)
+  let raf;
+  function move(e){
+    const x=e.clientX||(e.touches&&e.touches[0].clientX);
+    const y=e.clientY||(e.touches&&e.touches[0].clientY);
+    if(!x&& !y) return;
+    if(!raf){
+      raf=requestAnimationFrame(()=>{ wrapper.style.setProperty('--mx',x+'px'); wrapper.style.setProperty('--my',y+'px'); raf=null;});
     }
-    function leave(){ spot.style.opacity = 0; }
-    window.addEventListener('mousemove', move, {passive:true});
-    window.addEventListener('mouseleave', leave, {passive:true});
-    window.addEventListener('touchstart', ()=>{ spot.style.display='none'; }, {once:true, passive:true});
+    spot.style.opacity=.9;
   }
-
-  obj.addEventListener('load', ()=> drawAll(obj.contentDocument));
-  if (obj.contentDocument) drawAll(obj.contentDocument);
-
-  enableSpotlight();
+  function leave(){ spot.style.opacity=0; }
+  window.addEventListener('mousemove', move, {passive:true});
+  window.addEventListener('mouseleave', leave, {passive:true});
+  window.addEventListener('touchstart', ()=>{ spot.style.display='none'; }, {once:true, passive:true});
 })();
 </script>
 

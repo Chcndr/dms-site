@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg viewBox="0 0 1000 1200" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <style>
+      :root{ color:#5cf2ff; }
+      .stroke{ fill:none; stroke:currentColor; stroke-width:1.6; stroke-linecap:round; stroke-linejoin:round; }
+      .city  { fill:currentColor; }
+    </style>
+  </defs>
+
+  <!-- ===== MAINLAND (contorno semplificato) ===== -->
+  <polyline id="it-main" class="stroke" points="
+    320,90  255,135  205,190  190,245  205,300  240,360  235,420
+    245,480  265,540  295,600  310,660  325,720  350,765  385,795
+    425,825  470,845  520,865  565,875  600,870  630,855  650,830
+    670,800  685,770  690,750  680,735  650,725  620,710  595,690
+    565,665  545,635  535,600  530,560  525,520  515,480  500,445
+    485,410  470,375  455,345  435,320  410,300  385,280  360,255
+    345,230  340,205  355,175  375,155  405,140  435,130  455,125
+    440,115  410,105  360,95  320,90
+  "/>
+
+  <!-- ===== SARDINIA ===== -->
+  <polyline id="it-sardinia" class="stroke" points="
+    200,820  225,835  245,860  260,900  265,940  260,980  245,1015
+    220,1040  195,1055  175,1030  170,990  175,940  185,890  200,820
+  "/>
+
+  <!-- ===== SICILY ===== -->
+  <polyline id="it-sicily" class="stroke" points="
+    430,970  500,990  565,1000  635,1005  705,1000  680,1045
+    635,1075  580,1095  520,1105  465,1098  430,1078  420,1040  430,970
+  "/>
+
+  <!-- ===== LINKS (pochi, decorativi) ===== -->
+  <g id="it-links" class="stroke" opacity="0.35">
+    <line x1="560" y1="680" x2="650" y2="780"/>
+    <line x1="560" y1="680" x2="620" y2="870"/>
+    <line x1="520" y1="560" x2="560" y2="680"/>
+    <line x1="520" y1="560" x2="540" y2="500"/>
+    <line x1="540" y1="500" x2="585" y2="430"/>
+    <line x1="520" y1="560" x2="460" y2="330"/>
+    <line x1="520" y1="560" x2="520" y2="865"/>
+  </g>
+
+  <!-- ===== CITIES (12) ===== -->
+  <g id="it-cities">
+    <circle class="city" cx="520" cy="300" r="3.2" data-name="Milano"/>
+    <circle class="city" cx="460" cy="330" r="3.2" data-name="Torino"/>
+    <circle class="city" cx="585" cy="430" r="3.2" data-name="Venezia"/>
+    <circle class="city" cx="540" cy="500" r="3.2" data-name="Bologna"/>
+    <circle class="city" cx="520" cy="560" r="3.2" data-name="Firenze"/>
+    <circle class="city" cx="560" cy="680" r="3.2" data-name="Roma"/>
+    <circle class="city" cx="620" cy="870" r="3.2" data-name="Napoli"/>
+    <circle class="city" cx="650" cy="780" r="3.2" data-name="Bari"/>
+    <circle class="city" cx="760" cy="1035" r="3.2" data-name="Reggio Calabria"/>
+    <circle class="city" cx="720" cy="1050" r="3.2" data-name="Catania"/>
+    <circle class="city" cx="370" cy="880" r="3.2" data-name="Cagliari"/>
+    <circle class="city" cx="585" cy="610" r="3.2" data-name="Ancona"/>
+  </g>
+</svg>
+
