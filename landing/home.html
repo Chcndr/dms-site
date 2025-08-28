@@ -10,6 +10,7 @@
     --ink:#dde2e4; /* beige/grigio DMS */
     --accent:#46a0bd; --panel:#0c2028;
     --btnFill:rgba(20,80,100,.68); --btnStroke:rgba(190,230,240,.95);
+    --btnW: 140px; /* desktop default (era più grande) */
   }
   html,body{height:100%;margin:0;background:radial-gradient(1200px 800px at 20% 10%, rgba(60,200,255,.18), transparent 60%),
                                 radial-gradient(900px 600px at 92% 24%, rgba(0,180,210,.16), transparent 60%),
@@ -32,7 +33,12 @@
 
   /* logo */
   .logo-bl{position:fixed; left:2vw; bottom:2vh; z-index:5}
-  .logo-bl img{display:block; width:calc( (var(--btnW,180px))*2 + 0.8vw ); height:auto; filter:drop-shadow(0 6px 8px rgba(0,0,0,.35));}
+  .logo-bl img{
+    display:block;
+    width: clamp(160px, 22vw, 280px); /* prima legato ai bottoni → enorme */
+    height:auto;
+    filter: drop-shadow(0 6px 8px rgba(0,0,0,.35));
+  }
 
   /* stage */
   #stage{position:relative; width:100vw; height:100vh; z-index:1}
@@ -58,11 +64,9 @@
   .tick{stroke:rgba(185,240,255,.9); stroke-width:3}
 
   /* responsive */
-  @media (max-width: 920px){
-    :root{ --btnW: 120px; }
-  }
+  @media (max-width: 1200px){ :root{ --btnW: 120px; } }
+  @media (max-width: 820px) { :root{ --btnW: 96px; } }
   @media (max-width: 640px){
-    :root{ --btnW: 88px; }
     .top-right h1{font-size:18px}
   }
 </style>
@@ -159,18 +163,19 @@
     const W = window.innerWidth, H = window.innerHeight;
     const cx = W/2, cy = H*0.50;
 
-    // semiassi (versione "slight"): tengono tutto dentro allo schermo
-    const a = Math.min(W*0.47, W/2 - 24);
-    const b = Math.min(H*0.35, H*0.54);
+    // 3.1) Dimensione pulsanti adattiva (evita sovrapporsi)
+    let btnW = Math.max(96, Math.min( Math.round(W*0.09), 150 ));
+    document.documentElement.style.setProperty('--btnW', btnW+'px');
 
-    // pulsanti
-    const btnW = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--btnW')) || 180;
+    // semiassi ellisse (leggermente ovalizzata)
+    const a = Math.min(W*0.46, W/2 - 24);
+    const b = Math.min(H*0.34, H/2 - 36);
 
-    // viewport 16:9 che stia nell'ellisse interna
-    const innerA = a - btnW*0.55;
-    const innerB = b - btnW*0.55;
+    // viewport 16:9 dentro all'ellisse interna
+    const innerA = a - btnW*0.60;
+    const innerB = b - btnW*0.60;
 
-    let vw = W*0.64, vh = vw*9/16, maxH = H*0.44;
+    let vw = W*0.62, vh = vw*9/16, maxH = H*0.44;
     if(vh > maxH){ vh = maxH; vw = vh*16/9; }
     let k = 1.0;
     while( (((vw*k)/2)**2)/(innerA**2) + (((vh*k)/2)**2)/(innerB**2) > 1.0 && k>0.4 ){ k -= 0.02; }
@@ -182,13 +187,11 @@
     view.style.left   = (cx - vw/2)+'px';
     view.style.top    = (cy - vh/2)+'px';
 
-    // disegna ticks + lancetta (sotto al video)
+    // SVG: ticks + lancetta (sotto al video)
     svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
     svg.innerHTML = '';
-    const g = document.createElementNS('http://www.w3.org/2000/svg','g');
-    svg.appendChild(g);
+    const g = document.createElementNS('http://www.w3.org/2000/svg','g'); svg.appendChild(g);
 
-    // ticks ore
     for(let i=0;i<12;i++){
       const t = -Math.PI/2 + (2*Math.PI*i/12);
       const ix = cx + (a-18)*Math.cos(t), iy = cy + (b-18)*Math.sin(t);
@@ -196,73 +199,92 @@
       const line = document.createElementNS('http://www.w3.org/2000/svg','line');
       line.setAttribute('x1', ix); line.setAttribute('y1', iy);
       line.setAttribute('x2', ex); line.setAttribute('y2', ey);
-      line.setAttribute('class','tick');
-      g.appendChild(line);
+      line.setAttribute('class','tick'); g.appendChild(line);
     }
-
-    // centro
     const c = document.createElementNS('http://www.w3.org/2000/svg','circle');
-    c.setAttribute('cx', cx); c.setAttribute('cy', cy); c.setAttribute('r', 10); c.setAttribute('class','center-dot');
-    g.appendChild(c);
+    c.setAttribute('cx', cx); c.setAttribute('cy', cy); c.setAttribute('r', 10); c.setAttribute('class','center-dot'); g.appendChild(c);
 
-    // lancetta (linea + punta)
     const hand = document.createElementNS('http://www.w3.org/2000/svg','line');
     hand.setAttribute('id','hand'); hand.setAttribute('x1', cx); hand.setAttribute('y1', cy);
-    hand.setAttribute('x2', cx); hand.setAttribute('y2', cy);
-    g.appendChild(hand);
-
+    hand.setAttribute('x2', cx); hand.setAttribute('y2', cy); g.appendChild(hand);
     const tip = document.createElementNS('http://www.w3.org/2000/svg','polygon');
-    tip.setAttribute('id','handTip'); tip.setAttribute('fill', getComputedStyle(document.documentElement).getPropertyValue('--ink'));
-    g.appendChild(tip);
+    tip.setAttribute('id','handTip'); tip.setAttribute('fill', getComputedStyle(document.documentElement).getPropertyValue('--ink')); g.appendChild(tip);
 
-    // posiziona i 12 pulsanti
+    // Posiziona i 12 pulsanti
     nodes.forEach((el,i)=>{
       const t = -Math.PI/2 + (2*Math.PI*i/12);
       const x = cx + a*Math.cos(t) - btnW/2;
       const y = cy + b*Math.sin(t) - btnW/2;
       el.style.left = x+'px'; el.style.top = y+'px';
-      const item = CONTENT[i];
-      el.textContent = item ? (item.type==='pdf'?'PDF':'Video') : '•';
-      if(!item) el.classList.add('disabled'); else el.classList.remove('disabled');
     });
 
-    // animazione lancetta lungo ellisse (sotto al video)
-    let start = null;
+    // Animazione lancetta (rimane sotto al video)
+    let start=null;
     function anim(ts){
       if(!start) start = ts;
       const elapsed = ts - start;
-      const T = 12000; // giro completo ~12s
+      const T = 12000;
       const theta = -Math.PI/2 + 2*Math.PI*( (elapsed % T)/T );
       const px = cx + a*Math.cos(theta)*0.95;
       const py = cy + b*Math.sin(theta)*0.95;
       hand.setAttribute('x2', px); hand.setAttribute('y2', py);
-
-      // punta triangolare
       const bx = cx + a*Math.cos(theta)*0.86;
       const by = cy + b*Math.sin(theta)*0.86;
       const nx = -Math.sin(theta), ny = Math.cos(theta);
-      const tipW = 18, tipL = 30;
+      const tipW = 18;
       tip.setAttribute('points', `${px},${py} ${bx+nx*tipW},${by+ny*tipW} ${bx-nx*tipW},${by-ny*tipW}`);
-
       requestAnimationFrame(anim);
     }
     requestAnimationFrame(anim);
+  }
+
+  // mapping contenuti semplificato (solo primi 2 attivi)
+  const CONTENT = [
+    {type:'pdf', url:'./docs/hub-nazionale.pdf'},
+    {type:'pdf', url:'./docs/dms-e-cluster.pdf'},
+    null,null,null,null,null,null,null,null,null,null
+  ];
+
+  // utility: assicura che l'hero sia presente
+  function ensureHero(){
+    if(!view.querySelector('video') && !view.querySelector('iframe')){
+      view.innerHTML = '';
+      const v = document.createElement('video');
+      v.src = './videos/video-hero.mp4';
+      v.autoplay = true; v.loop = true; v.muted = true; v.playsInline = true;
+      v.setAttribute('playsinline','');
+      view.appendChild(v);
+    }
   }
 
   // click: carica contenuto e ferma eventuale hero
   nodes.forEach(el=>{
     el.addEventListener('click', ()=>{
       const idx = +el.dataset.i;
-      loadContent(CONTENT[idx]);
+      const item = CONTENT[idx];
+      loadContent(item);
     });
   });
+
+  // posiziona i pulsanti con contenuto corretto
+  function updateNodes(){
+    nodes.forEach((el,i)=>{
+      const item = CONTENT[i];
+      el.textContent = item ? (item.type==='pdf'?'PDF':'Video') : '•';
+      if(!item) el.classList.add('disabled'); else el.classList.remove('disabled');
+    });
+  }
 
   // primo load: video hero in autoplay
   view.appendChild(createHero());
 
+  // Safari/back-forward cache: se rientro nella pagina, ricarica l'hero
+  window.addEventListener('pageshow', ensureHero);
+
   // layout iniziale + su resize
   window.addEventListener('resize', layout, {passive:true});
   layout();
+  updateNodes();
 })();
 </script>
 </body>
