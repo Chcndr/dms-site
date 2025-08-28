@@ -1,38 +1,47 @@
-<!DOCTYPE html>
-<html lang="it" style="--btnW:123px">
+<!doctype html>
+<html lang="it">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>DMS — Gemello Digitale (Home)</title>
-  <link rel="stylesheet" href="app.css">
+  <link rel="stylesheet" href="app.css" />
 </head>
-<body class="home-orologio">
+<body>
   <div class="toolbar">
     <a class="btn" href="./index.html">🎬 Spot</a>
     <a class="btn" href="./mindmap.html">🧠 Mappa</a>
   </div>
-  
-  <h1 class="claim">
-    <b>GEMELLO DIGITALE</b>
-    <b>DEL COMMERCIO</b>
-    <small>DMS • Orologio roadmap</small>
-  </h1>
 
-  <svg id="ellipseLayer" class="ellipse-layer" aria-hidden="true" viewBox="0 0 1366 911">
-    <g>
-      <circle cx="683" cy="455.5" r="10" class="center-dot"></circle>
-      <line id="hand" x1="683" y1="455.5" x2="1100" y2="455.5"></line>
-      <polygon id="handTip" fill="#dde2e4" points="1100,455.5 1095,465 1095,446"></polygon>
-    </g>
-  </svg>
+  <h1 class="claim"><b>GEMELLO DIGITALE</b><b>DEL COMMERCIO</b><small>DMS • Orologio roadmap</small></h1>
 
-  <div id="viewport" class="viewport" role="region" aria-label="contenuti" style="width:655.596089px;height:368.7728px;left:355.201956px;top:271.1136px">
-    <video autoplay muted playsinline webkit-playsinline preload="auto">
-      <source src="videos/video-hero.mp4" type="video/mp4">
-    </video>
+  <div class="clock-underlay" aria-hidden="true">
+    <div class="oval"></div>
+    <div class="hand"></div>
+    <div class="pivot"></div>
+  </div>
+
+  <div class="spotlight" aria-hidden="true"></div>
+
+  <div class="viewport" role="region" aria-label="contenuti">
+    <video id="heroVideo" autoplay muted playsinline webkit-playsinline loop
+      src="videos/video-hero.mp4"></video>
+  </div>
+
+  <div class="nodes" aria-hidden="false">
+    <button class="node"><span class="tag">PDF</span></button>
+    <button class="node"><span class="tag">PDF</span></button>
+    <button class="node"><span class="tag">PDF</span></button>
+    <button class="node"><span class="tag">PDF</span></button>
+    <button class="node"><span class="tag">PDF</span></button>
+    <button class="node"><span class="tag">PDF</span></button>
+    <button class="node"><span class="tag">PDF</span></button>
+    <button class="node"><span class="tag">PDF</span></button>
+    <button class="node"><span class="tag">PDF</span></button>
+    <button class="node"><span class="tag">PDF</span></button>
+    <button class="node"><span class="tag">PDF</span></button>
+    <button class="node"><span class="tag">PDF</span></button>
   </div>
 
   <script src="app.js"></script>
 </body>
 </html>
-
