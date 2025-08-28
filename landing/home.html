@@ -57,27 +57,33 @@
     filter:drop-shadow(0 0 10px rgba(92,242,255,.08));
   }
 
-  /* stile interno SVG (via currentColor) */
+  /* stile per QUALSIASI path/polilinea dentro l'SVG caricato */
   .bg-italy-anim svg{ color:var(--neon); }
-  .bg-italy-anim svg #it-outline{ stroke-linecap:round; stroke-linejoin:round; }
-  .bg-italy-anim svg #it-links line{ stroke:var(--neon); stroke-opacity:.35; stroke-width:1.2; }
-  .bg-italy-anim svg #it-nodes circle{
-    fill:var(--neon); opacity:0;
-    filter:drop-shadow(0 0 6px rgba(92,242,255,.55));
-    transform-box:fill-box; transform-origin:center;
+  .bg-italy-anim svg path,
+  .bg-italy-anim svg polyline,
+  .bg-italy-anim svg polygon{
+    fill: none !important;
+    stroke: currentColor !important;
+    stroke-width: 1.2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    opacity:.9;
   }
-  /* città con glow più visibile e pulse lento */
-  .bg-italy-anim svg #it-cities .city{
-    fill:var(--neon);
-    filter:drop-shadow(0 0 8px rgba(92,242,255,.75));
-    opacity:.0;
-  }
+  /* gruppi "random" eventuali nascosti (safety) */
+  .bg-italy-anim svg #scribbles,
+  .bg-italy-anim svg .scribbles,
+  .bg-italy-anim svg #random,
+  .bg-italy-anim svg .random { display:none !important; }
 
-  /* stato "acceso": breathing del contorno */
-  .bg-italy-anim.lit #it-outline{ animation:breath 6s ease-in-out infinite; }
+  /* breathing finale del tratto (molto tenue) */
+  .bg-italy-anim.lit svg path,
+  .bg-italy-anim.lit svg polyline,
+  .bg-italy-anim.lit svg polygon{
+    animation: breath 6s ease-in-out infinite;
+  }
   @keyframes breath{
-    0%,100%{ opacity:.28; filter:blur(0) }
-    50%{    opacity:.38; filter:blur(.2px) }
+    0%,100%{ opacity:.24; filter:blur(0) }
+    50%     { opacity:.34; filter:blur(.2px) }
   }
 
   /* spotlight che segue il mouse (mix-blend screen) */
@@ -88,6 +94,24 @@
       radial-gradient(160px 120px at var(--mx,50%) var(--my,50%), rgba(255,255,255,.04), transparent 70%);
     mix-blend-mode:screen;
     opacity:0; transition:opacity .25s ease;
+  }
+
+  /* ===== Retro-illuminazione viewport (finestra video) ===== */
+  .viewport, .hero{
+    position:relative;
+    z-index:30;
+    box-shadow: 0 20px 60px rgba(0,0,0,.35);
+    border-radius: 16px;
+  }
+  .viewport::before, .hero::before{
+    content:"";
+    position:absolute; inset:-4%;
+    border-radius: 20px;
+    background:
+      radial-gradient(140% 120% at 50% 50%, rgba(92,242,255,.22), transparent 60%),
+      radial-gradient(80% 60%  at 50% 50%, rgba(255,255,255,.06), transparent 70%);
+    filter: blur(12px);
+    z-index:-1; opacity:.9; pointer-events:none;
   }
 
   /* isola lo stacking della pagina */
@@ -235,7 +259,9 @@
   @media (prefers-reduced-motion: reduce){
     .home-orologio .node, .home-orologio .node::before{ transition:none !important; }
     .bg-italy-anim .bg-gradient{ animation:none; }
-    .bg-italy-anim.lit #it-outline{ animation:none; }
+    .bg-italy-anim.lit svg path,
+    .bg-italy-anim.lit svg polyline,
+    .bg-italy-anim.lit svg polygon{ animation:none; }
     .bg-italy-anim .spotlight{ display:none; }
   }
 </style>
@@ -245,7 +271,8 @@
   <!-- BACKGROUND ITALIA ANIMATA -->
   <div class="bg-italy-anim" aria-hidden="true">
     <div class="bg-gradient"></div>
-    <object id="italySVG" type="image/svg+xml" data="./assets/italy-outline.svg"></object>
+    <!-- usiamo l'SVG già presente: italy.svg -->
+    <object id="italySVG" type="image/svg+xml" data="./assets/italy.svg"></object>
     <div class="spotlight"></div>
   </div>
 
@@ -436,61 +463,48 @@ ns.forEach(n=>{ if(n.getAttribute('aria-disabled')==='true') return;
   const obj = document.getElementById('italySVG');
   const spot = container.querySelector('.spotlight');
 
-  function animateSvg(doc){
-    const outline = doc.getElementById('it-outline');
-    const linksG  = doc.getElementById('it-links');
-    const nodesG  = doc.getElementById('it-nodes');
-    const citiesG = doc.getElementById('it-cities');
-    if(!outline) return;
-
-    // 1) Draw del contorno
-    const L = outline.getTotalLength();
-    outline.style.strokeDasharray = L;
-    outline.style.strokeDashoffset = L;
-    outline.style.transition = 'stroke-dashoffset 1200ms ease';
-    requestAnimationFrame(()=>{ outline.style.strokeDashoffset = '0'; });
-
-    // 2) Collegamenti e nodi (stagger)
-    const links = linksG ? [...linksG.querySelectorAll('line')] : [];
-    const nodes = nodesG ? [...nodesG.querySelectorAll('circle')] : [];
-    links.forEach((ln,i)=>{
-      ln.style.opacity = '0';
-      ln.style.transition = 'opacity 420ms ease';
-      setTimeout(()=>{ ln.style.opacity = '.35'; }, 250 + i*60);
-    });
-    nodes.forEach((c,i)=>{
-      c.style.opacity = '0';
-      c.style.transition = 'opacity 360ms ease, transform 360ms ease';
-      setTimeout(()=>{ c.style.opacity = '.95'; c.style.transform = 'scale(1.18)'; }, 600 + i*45);
-      setTimeout(()=>{ c.style.transform = 'scale(1)'; }, 980 + i*45);
+  function drawAll(doc){
+    // nascondi eventuali gruppi "random"
+    ['#scribbles','.scribbles','#random','.random'].forEach(sel=>{
+      doc.querySelectorAll(sel).forEach(n=> n.style.display='none');
     });
 
-    // 3) Città (glow + pulse asincrono)
-    const cities = citiesG ? [...citiesG.querySelectorAll('.city')] : [];
-    cities.forEach((c,i)=>{
-      c.style.opacity = '0';
-      c.style.transition = 'opacity 400ms ease';
-      setTimeout(()=>{ c.style.opacity = '1'; }, 900 + i*70);
-      // pulse CSS
-      const d = (i%12)*0.7; // sfasamento
-      c.style.animation = `cityPulse 8s ease-in-out ${d}s infinite`;
+    const segs = doc.querySelectorAll('path, polyline, polygon');
+    if(!segs.length) return;
+
+    // prepara tutti i segmenti per il "draw"
+    segs.forEach((el,i)=>{
+      try{
+        const L = (typeof el.getTotalLength === 'function') ? el.getTotalLength() : 800;
+        el.style.strokeDasharray  = L;
+        el.style.strokeDashoffset = L;
+        el.style.transition = `stroke-dashoffset 1100ms ease ${i*70}ms`;
+      }catch(e){
+        // fallback
+        el.style.opacity = .28;
+      }
     });
 
-    // Stato finale: breathing del contorno
-    setTimeout(()=>{ container.classList.add('lit'); }, 1400);
+    // avvia l'animazione
+    requestAnimationFrame(()=>{
+      segs.forEach(el=> el.style.strokeDashoffset = 0);
+    });
+
+    // stato finale: breathing
+    setTimeout(()=> container.classList.add('lit'), 1400);
   }
 
-  // Spotlight mouse (desktop only)
+  // spotlight mouse (desktop)
   function enableSpotlight(){
-    let raf; const root = container;
+    let raf;
     function move(e){
       const x = e.clientX || (e.touches && e.touches[0].clientX);
       const y = e.clientY || (e.touches && e.touches[0].clientY);
       if(!x && !y) return;
       if(!raf){
         raf = requestAnimationFrame(()=>{
-          root.style.setProperty('--mx', x+'px');
-          root.style.setProperty('--my', y+'px');
+          container.style.setProperty('--mx', x+'px');
+          container.style.setProperty('--my', y+'px');
           raf = null;
         });
       }
@@ -499,25 +513,12 @@ ns.forEach(n=>{ if(n.getAttribute('aria-disabled')==='true') return;
     function leave(){ spot.style.opacity = 0; }
     window.addEventListener('mousemove', move, {passive:true});
     window.addEventListener('mouseleave', leave, {passive:true});
-    // disabilita su touch
     window.addEventListener('touchstart', ()=>{ spot.style.display='none'; }, {once:true, passive:true});
   }
 
-  // city pulse keyframes (inietta nel documento)
-  const kf = document.createElement('style');
-  kf.textContent = `
-    @keyframes cityPulse {
-      0%, 100% { transform:scale(1); filter:drop-shadow(0 0 8px rgba(92,242,255,.70)); }
-      50%      { transform:scale(1.12); filter:drop-shadow(0 0 12px rgba(92,242,255,.95)); }
-    }
-  `;
-  document.head.appendChild(kf);
+  obj.addEventListener('load', ()=> drawAll(obj.contentDocument));
+  if (obj.contentDocument) drawAll(obj.contentDocument);
 
-  // Init quando l'SVG è disponibile
-  obj.addEventListener('load', ()=> animateSvg(obj.contentDocument));
-  if (obj.contentDocument) animateSvg(obj.contentDocument);
-
-  // spotlight (rispetta reduce-motion via CSS)
   enableSpotlight();
 })();
 </script>
