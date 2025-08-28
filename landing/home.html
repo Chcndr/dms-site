@@ -1,255 +1,45 @@
 <!doctype html>
 <html lang="it">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
-<title>DMS — Gemello Digitale • Orologio roadmap</title>
-<style>
-  :root{
-    --bg1:#0a4650;
-    --bg2:#0f5c67;
-    --glass:rgba(255,255,255,.06);
-    --stroke:rgba(255,255,255,.18);
-    --neon:#7eeaff;
-    --neon-soft:rgba(126,234,255,.35);
-    --node-size: 108px;         /* dimensione pulsanti */
-    --ring-rx: 38vmin;          /* raggio orizzontale ellisse */
-    --ring-ry: 27vmin;          /* raggio verticale ellisse  */
-    --hand-speed: 12s;          /* durata giro lancetta      */
-  }
-
-  /* RESET MINIMO */
-  *{ box-sizing:border-box; }
-  html,body{ height:100%; margin:0; }
-  body{
-    font-family: system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, sans-serif;
-    color:#e7f3f5;
-    background: radial-gradient(1200px 700px at 70% -10%, #17707c 0%, var(--bg2) 45%, var(--bg1) 100%);
-    overflow-x:hidden;
-  }
-
-  /* HEADER */
-  .topbar{
-    position:fixed; inset:16px auto auto 16px; display:flex; gap:10px; z-index:40;
-  }
-  .chip{
-    padding:.55rem .9rem; border-radius:12px; border:1px solid var(--stroke);
-    background:rgba(0,0,0,.18); backdrop-filter:saturate(1.2) blur(6px);
-    box-shadow:0 8px 18px rgba(0,0,0,.25), inset 0 0 0 1px rgba(255,255,255,.04);
-    color:#d8eaee; font-weight:600; cursor:pointer; user-select:none;
-  }
-  .title{
-    position:fixed; right:20px; top:20px; z-index:40; text-align:right; line-height:1.15;
-    text-shadow:0 2px 18px rgba(0,0,0,.35);
-  }
-  .title h1{ margin:0; font-size: clamp(18px, 2.2vw, 28px); letter-spacing:.02em;}
-  .title .sub{ opacity:.85; font-weight:600; font-size: clamp(12px, 1.2vw, 14px); }
-
-  /* STAGE */
-  #stage{
-    position:relative; width:100%; min-height:100vh; isolation:isolate;
-  }
-
-  /* OROLOGIO (sotto tutto) */
-  #clock{
-    position:absolute; inset:0; z-index:1; pointer-events:none;
-  }
-  #clock .hand{
-    position:absolute; left:50%; top:50%;
-    width: calc(var(--ring-rx) + 6vmin); height:2px;
-    background: linear-gradient(90deg, rgba(255,255,255,0) 0%, var(--neon-soft) 60%, var(--neon) 100%);
-    transform-origin: 0% 50%;
-    filter: drop-shadow(0 0 10px var(--neon-soft));
-    animation: spin var(--hand-speed) linear infinite;
-    opacity:.85;
-  }
-  #clock .hub{
-    position:absolute; left:50%; top:50%; transform:translate(-50%,-50%);
-    width:12px; height:12px; border-radius:50%;
-    background: radial-gradient(circle, var(--neon) 0 40%, rgba(126,234,255,.6) 65%, transparent 66%);
-    box-shadow:0 0 24px var(--neon-soft);
-  }
-  @keyframes spin{ to{ transform: rotate(360deg); } }
-
-  /* VIEWPORT VIDEO (sopra ai pulsanti) */
-  #viewport{
-    position:relative; margin: 20vh auto 8vh; width:min(86vw, 980px); aspect-ratio:16/9;
-    border-radius:18px; overflow:hidden; z-index:30;
-    background:rgba(0,0,0,.28); box-shadow:
-      0 22px 50px rgba(0,0,0,.45),
-      0 0 110px rgba(126,234,255,.22); /* retroilluminazione */
-  }
-  #hero{
-    width:100%; height:100%; object-fit:cover; display:block;
-    background:#000;
-  }
-  .corner{
-    position:absolute; width:14px; height:14px; border:2px solid rgba(255,255,255,.2);
-    border-radius:4px; opacity:.6;
-  }
-  .corner.lt{ left:10px; top:10px; border-right:none; border-bottom:none;}
-  .corner.rt{ right:10px; top:10px; border-left:none; border-bottom:none;}
-  .corner.lb{ left:10px; bottom:10px; border-right:none; border-top:none;}
-  .corner.rb{ right:10px; bottom:10px; border-left:none; border-top:none;}
-
-  /* RING DEI 12 PULSANTI (sopra clock, sotto video) */
-  #ring{
-    position:absolute; inset:0; z-index:20; pointer-events:none; /* i nodi attivano i pointer */
-  }
-  .node{
-    position:absolute; width:var(--node-size); height:var(--node-size);
-    transform: translate(-50%,-50%);
-    border-radius:16px; border:1px solid var(--stroke);
-    background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
-    box-shadow:
-      0 10px 22px rgba(0,0,0,.35),
-      inset 0 0 0 1px rgba(255,255,255,.04);
-    display:grid; place-items:center; color:#cfe6ea; font-weight:700;
-    letter-spacing:.02em; pointer-events:auto; user-select:none; cursor:pointer;
-    transition:.25s ease transform, .25s ease box-shadow, .25s ease background;
-    backdrop-filter: blur(6px) saturate(1.15);
-  }
-  .node:hover, .node:focus{
-    transform: translate(-50%,-50%) translateY(-2px);
-    box-shadow:
-      0 14px 36px rgba(0,0,0,.45),
-      0 0 36px var(--neon-soft);
-    background: radial-gradient(120px 120px at 50% 50%, rgba(126,234,255,.16), rgba(255,255,255,0) 60%);
-  }
-
-  /* RESPONSIVE */
-  @media (max-width: 980px){
-    :root{ --node-size: 96px; --ring-rx: 40vmin; --ring-ry: 28vmin; }
-    #viewport{ width:min(92vw, 900px); margin: 18vh auto 6vh; }
-  }
-  @media (max-width: 740px){
-    :root{ --node-size: 86px; --ring-rx: 44vmin; --ring-ry: 30vmin; }
-    #viewport{ width:min(94vw, 840px); margin: 16vh auto 6vh; }
-  }
-
-</style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>DMS — Gemello Digitale del Commercio</title>
+  <link rel="preload" href="videos/video-hero.mp4" as="video" type="video/mp4">
+  <link rel="stylesheet" href="home.css">
 </head>
 <body>
-  <!-- Header -->
-  <div class="topbar">
-    <a class="chip" href="./index.html">🎬 Spot</a>
-    <a class="chip" href="./mindmap.html">🧠 Mappa</a>
-  </div>
-  <div class="title">
-    <h1>GEMELLO DIGITALE<br/>DEL COMMERCIO</h1>
-    <div class="sub">DMS • Orologio roadmap</div>
-  </div>
+  <div id="stage">
+    <nav class="toolbar">
+      <a class="btn" href="./index.html">🎬 Spot</a>
+      <a class="btn" href="./mindmap.html">🧠 Mappa</a>
+    </nav>
 
-  <!-- Stage -->
-  <main id="stage">
+    <header class="title">
+      <div class="t1">GEMELLO DIGITALE</div>
+      <div class="t2">DEL COMMERCIO</div>
+      <div class="t3">DMS • Orologio roadmap</div>
+    </header>
 
-    <!-- Clock underlay -->
+    <!-- OROLOGIO sotto a tutto -->
     <div id="clock" aria-hidden="true">
       <div class="hand"></div>
       <div class="hub"></div>
     </div>
 
-    <!-- Ring nodes (12) -->
-    <div id="ring" aria-hidden="false"></div>
-
-    <!-- Video viewport -->
-    <section id="viewport" aria-label="Video introduttivo">
-      <video id="hero"
-        autoplay
-        muted
-        playsinline
-        webkit-playsinline
-        preload="auto"
-        poster=""
-      >
-        <source src="videos/video-hero.mp4" type="video/mp4"/>
+    <!-- VIDEO CENTRALE -->
+    <section id="viewport" aria-label="video introduttivo">
+      <video id="hero" autoplay muted playsinline webkit-playsinline preload="auto">
+        <source src="videos/video-hero.mp4" type="video/mp4">
       </video>
-      <div class="corner lt"></div><div class="corner rt"></div>
-      <div class="corner lb"></div><div class="corner rb"></div>
     </section>
-  </main>
 
-<script>
-/* ============ Utils ============ */
-const $ = sel => document.querySelector(sel);
+    <!-- 12 PULSANTI (posizionati via JS) -->
+    <ul id="nodes" aria-label="tap per aprire contenuti">
+      <!-- creati da JS -->
+    </ul>
+  </div>
 
-/* iOS autoplay + ripartenza da bfcache */
-function ensureHero(){
-  const v = $('#hero');
-  if(!v) return;
-  v.muted = true;
-  v.playsInline = true;       // iOS Safari property
-  v.setAttribute('playsinline','');
-  v.setAttribute('webkit-playsinline','');
-
-  // forza il play (ignora errori se policy blocca)
-  const tryPlay = () => {
-    const p = v.play();
-    if (p && p.catch) p.catch(()=>{ /* no-op */ });
-  };
-
-  if (v.readyState >= 2) tryPlay();
-  else v.addEventListener('loadeddata', tryPlay, { once:true });
-
-  // Fallback: se errore sulla src, prova il teaser
-  v.addEventListener('error', () => {
-    const cur = v.querySelector('source');
-    if (cur && !/teaser-hub-dms\.mp4/.test(cur.src)){
-      cur.src = 'videos/teaser-hub-dms.mp4';
-      v.load(); tryPlay();
-    }
-  }, { once:true });
-}
-
-/* Posizionamento dei 12 pulsanti lungo ellisse */
-function buildRing(){
-  const ring = $('#ring');
-  ring.innerHTML = '';
-  const N = 12;
-  const rect = $('#viewport').getBoundingClientRect();
-
-  const stage = $('#stage').getBoundingClientRect();
-  const cx = stage.width/2;
-  const cy = rect.top + rect.height/2 + window.scrollY;
-
-  const rx = Math.min(window.innerWidth*0.40, parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--ring-rx')));
-  const ry = Math.min(window.innerHeight*0.30, parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--ring-ry')));
-
-  for(let i=0;i<N;i++){
-    const theta = (i/N)*2*Math.PI;
-    const x = cx + rx*Math.cos(theta);
-    const y = cy + ry*Math.sin(theta);
-
-    const n = document.createElement('button');
-    n.className = 'node';
-    n.textContent = 'PDF';
-    n.style.left = x+'px';
-    n.style.top  = y+'px';
-    n.addEventListener('click', ()=>{ /* slot futuro */ });
-    ring.appendChild(n);
-  }
-
-  // centra la lancetta rispetto allo stage, lunghezza = rx
-  const hand = document.querySelector('#clock .hand');
-  hand.style.left = (cx)+'px';
-  hand.style.top  = (cy)+'px';
-  hand.style.width = (rx + 36) + 'px';
-}
-
-/* Riposiziona su resize/orientamento */
-const onResize = ()=> { buildRing(); };
-window.addEventListener('resize', onResize);
-window.addEventListener('orientationchange', onResize);
-
-/* Ripristino video quando si rientra da back-forward cache */
-window.addEventListener('pageshow', (e)=>{ if(e.persisted) ensureHero(); });
-
-/* Avvio */
-document.addEventListener('DOMContentLoaded', ()=>{
-  ensureHero();
-  buildRing();
-});
-</script>
+  <script src="home.js"></script>
 </body>
 </html>
 
