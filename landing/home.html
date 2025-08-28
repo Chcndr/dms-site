@@ -13,6 +13,12 @@
     --btnStroke:rgba(190,230,240,.95);
     --btnW:140px;
     --radius:16px;
+    /* Palette neon */
+    --neon:#5cf2ff;               /* ciano chiaro */
+    --neon-2:#00d0ff;             /* ciano saturo */
+    --neon-hot:#8af7ff;           /* highlight */
+    --node-bg:rgba(6,32,38,.28);  /* card bg */
+    --node-br:rgba(255,255,255,.22);
   }
   html,body{height:100%}
   body{
@@ -95,19 +101,65 @@
     stroke-width:3; stroke-linecap:round;
   }
 
+  /* wrapper layer dei pulsanti già sopra all'orologio */
+  .nodes-layer{ position:relative; z-index:20; }
+
+  /* pulsante (quadrato) neon */
   .node{
-    position:fixed; width:var(--btnW); height:var(--btnW);
-    border-radius:16px; z-index:2;
-    border: 2px solid var(--btnStroke);
-    background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
-    color: var(--ink);
-    display:grid; place-items:center;
-    box-shadow: 0 10px 22px rgba(0,0,0,.28), inset 0 0 0 0 rgba(255,255,255,.15);
-    backdrop-filter: blur(4px);
-    transition: transform .15s ease;
+    position:relative; display:grid; place-items:center;
+    width:clamp(96px, 9vw, 150px); aspect-ratio:1/1;
+    border-radius:16px; border:1.5px solid var(--node-br);
+    background:var(--node-bg); color:var(--ink);
+    backdrop-filter:blur(4px);
+    transition:transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+    isolation:isolate; /* stacking locale per i pseudo-elementi */
   }
-  .node:hover{ transform: translateY(-2px) }
-  .node .tag{ opacity:.9; font-weight:700; }
+
+  /* Ombra sotto (scurisce il fondo) */
+  .node::after{
+    content:""; position:absolute; inset:auto 8% -12px 8%;
+    height:28px; border-radius:20px;
+    background:radial-gradient(60% 80% at 50% 20%, rgba(0,0,0,.38), transparent 70%);
+    filter:blur(10px); z-index:-1; pointer-events:none;
+  }
+
+  /* Glow neon (sotto al bordo) */
+  .node::before{
+    content:""; position:absolute; inset:-2px;
+    border-radius:16px; z-index:-1; pointer-events:none;
+    background:
+      radial-gradient(120% 120% at 50% 50%, rgba(92,242,255,.35), transparent 60%),
+      conic-gradient(from 0deg, var(--neon), var(--neon-2), var(--neon), var(--neon-2));
+    opacity:.0; filter:blur(8px);
+    transition:opacity .18s ease, filter .18s ease;
+  }
+
+  /* Stato hover/focus/attivo: illumina + bordo neon */
+  .node:hover,
+  .node:focus-visible,
+  .node.is-active{
+    border-color:color-mix(in oklab, var(--neon) 75%, white);
+    box-shadow:
+      0 0 0 1px rgba(255,255,255,.08) inset,
+      0 0 14px rgba(92,242,255,.25),
+      0 8px 24px rgba(0,0,0,.35);
+  }
+  .node:hover::before,
+  .node:focus-visible::before,
+  .node.is-active::before{ opacity:.9; filter:blur(10px); }
+
+  /* "flicker" leggerissimo per effetto neon (solo su attivi) */
+  @keyframes neon-flicker{ 0%, 100%{opacity:.92} 45%{opacity:.84} 55%{opacity:.96} }
+  .node.is-active::before{ animation:neon-flicker 2.8s ease-in-out infinite; }
+
+  /* accessibilità: outline visibile con glow */
+  .node:focus-visible{
+    outline:2px solid var(--neon-hot); outline-offset:3px;
+  }
+
+  /* disabilitati */
+  .node[aria-disabled="true"]{ opacity:.55; filter:saturate(.6); cursor:default; }
+  .node[aria-disabled="true"]:hover{ transform:none; box-shadow:none; }
 
   .viewport{
     position:fixed; z-index:3;
@@ -130,6 +182,11 @@
   @media (max-width: 900px){
     .nodes-layer .node{ transform: scale(.92); }
     .viewport{ width:min(90vw, 960px); }
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    .node, .node::before{ transition:none !important; }
+    .node.is-active::before{ animation:none !important; }
   }
 </style>
 </head>
@@ -310,6 +367,20 @@
   });
   addEventListener('resize', layout);
   addEventListener('pageshow', ensureHero);
+</script>
+
+<script>
+(() => {
+  const nodes = [...document.querySelectorAll('.nodes-layer .node')];
+  function setActive(el){
+    nodes.forEach(n => n.classList.toggle('is-active', n===el));
+  }
+  nodes.forEach(n => {
+    if(n.getAttribute('aria-disabled') === 'true') return;
+    n.addEventListener('click', () => setActive(n));
+    n.addEventListener('keydown', (e)=>{ if(e.key==='Enter' || e.key===' ') { e.preventDefault(); setActive(n);} });
+  });
+})();
 </script>
 
 
