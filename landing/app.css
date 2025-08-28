@@ -45,12 +45,9 @@ body{
   position:relative; width:100%;
   border-radius:16px; overflow:hidden; background:#000;
   box-shadow: 0 12px 30px rgba(0,0,0,.35);
+  min-height:300px; /* Altezza minima robusta per tutti i dispositivi */
+  aspect-ratio:16/9; /* Mantiene proporzioni quando possibile */
 }
-/* Fallback altezza (iPad/IOS quando il video non è pronto) */
-.media-16x9::before{
-  content:""; display:block; padding-top:56.25%; /* 16:9 */
-}
-.media-16x9.is-ready::before{ padding-top:0; }
 
 .media-16x9 video{
   position:absolute; inset:0; width:100%; height:100%;

@@ -1,23 +1,20 @@
-// iOS-safe: assicura altezza e autoplay gentile
+// iOS-safe: autoplay semplice e robusto
 document.addEventListener('DOMContentLoaded', () => {
-  const box = document.querySelector('.media-16x9');
-  const vid = box?.querySelector('video');
-  if (!box || !vid) return;
+  const vid = document.querySelector('.media-16x9 video');
+  if (!vid) return;
 
-  // Sblocca l'altezza quando i metadati sono pronti
-  const markReady = () => box.classList.add('is-ready');
-  vid.addEventListener('loadedmetadata', markReady, { once: true });
-
-  // Impostazioni consigliate per iOS
+  // Impostazioni iOS
   vid.setAttribute('playsinline','');
   vid.muted = true;
 
   const tryPlay = () => vid.play().catch(() => {});
+  
+  // Tentativi di autoplay
   tryPlay();
   document.addEventListener('touchend', tryPlay, { once:true });
   document.addEventListener('click', tryPlay, { once:true });
-
-  // Se si torna alla tab, riprova
+  
+  // Riprova quando si torna alla tab
   document.addEventListener('visibilitychange', () => {
     if (!document.hidden) tryPlay();
   });
