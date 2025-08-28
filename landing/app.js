@@ -1,55 +1,56 @@
-(() => {
-  const $ = (s, r=document) => r.querySelector(s);
-  const $$ = (s, r=document) => [...r.querySelectorAll(s)];
+(function(){
+  const stage = document.getElementById('stage');
+  const nodesBox = document.getElementById('nodes');
+  const clockBox = document.getElementById('clock');
+  const hero = document.getElementById('hero');
 
-  // Spotlight follows pointer
-  const setSpot = (x,y) => {
-    document.documentElement.style.setProperty('--mx', x+'px');
-    document.documentElement.style.setProperty('--my', y+'px');
-  };
-  window.addEventListener('mousemove', e => setSpot(e.clientX, e.clientY), {passive:true});
-  window.addEventListener('touchstart', e => { const t = e.touches[0]; if (t) setSpot(t.clientX, t.clientY); }, {passive:true});
-
-  // iOS autoplay
-  const video = $('#heroVideo');
-  function ensureHero() {
-    if (!video) return;
-    video.muted = true; video.setAttribute('muted','');
-    video.setAttribute('playsinline',''); video.setAttribute('webkit-playsinline','');
-    video.autoplay = true;
-    const tryPlay = () => video.play().catch(()=>{});
-    if (video.readyState >= 2) tryPlay(); else video.addEventListener('loadeddata', tryPlay, {once:true});
-    window.addEventListener('pageshow', tryPlay);
+  // 1) Mai più doppioni del video
+  function ensureHero(){
+    // elimina eventuali duplicati lasciati da versioni precedenti
+    const vids = Array.from(document.querySelectorAll('video#hero'));
+    vids.forEach((v,i)=>{ if(i>0) v.remove(); });
+    hero.muted = true;
+    hero.setAttribute('playsinline',''); hero.setAttribute('webkit-playsinline','');
+    const p = hero.play(); if(p && p.catch) p.catch(()=>{});
+    window.addEventListener('pageshow', ()=>{ hero.play().catch(()=>{}); });
   }
 
-  // Remove any 'title' attributes (Safari bubble)
-  $$('[title]').forEach(el => el.removeAttribute('title'));
-
-  // Layout nodes on an ellipse
+  // 2) Ellisse + 12 pulsanti
   function layoutNodes(){
-    const vp = $('.viewport'); const nodes = $$('.nodes .node');
-    if (!vp || !nodes.length) return;
-    const r = vp.getBoundingClientRect();
-    const cx = r.left + r.width/2; const cy = r.top + r.height/2;
-    const a = Math.min(window.innerWidth*0.36, r.width*1.1);
-    const b = Math.min(window.innerHeight*0.28, r.height*0.9);
-    const start = -Math.PI/2;
-    nodes.forEach((n, i) => {
-      const t = start + (i * (2*Math.PI / nodes.length));
-      const x = cx + a * Math.cos(t) - n.offsetWidth/2;
-      const y = cy + b * Math.sin(t) - n.offsetHeight/2;
-      n.style.left = `${x}px`; n.style.top  = `${y}px`;
-    });
+    nodesBox.innerHTML='';
+    const r = stage.getBoundingClientRect();
+    const cx = r.width/2, cy = r.height/2 + 10;
+    const rx = Math.min(r.width, 1200) * 0.34;
+    const ry = rx * 0.72; // ellittico come da design
+    for(let i=0;i<12;i++){
+      const a = (i/12)*Math.PI*2 - Math.PI/2;
+      const x = cx + rx*Math.cos(a);
+      const y = cy + ry*Math.sin(a);
+      const n = document.createElement('a');
+      n.className='node'; n.textContent='PDF'; n.href='#';
+      n.style.left = (x-54)+'px'; n.style.top = (y-54)+'px';
+      nodesBox.appendChild(n);
+    }
   }
-  window.addEventListener('resize', () => requestAnimationFrame(layoutNodes), {passive:true});
-  window.addEventListener('load', () => { layoutNodes(); ensureHero(); });
 
-  // Optional glow cycling
-  let idx=0;
-  setInterval(() => {
-    const nodes = $$('.nodes .node'); if (!nodes.length) return;
-    nodes.forEach(n => n.classList.remove('is-active'));
-    nodes[idx % nodes.length].classList.add('is-active');
-    idx++;
-  }, 1400);
+  // 3) Lancetta sotto al video (SVG semplice)
+  function drawClock(){
+    clockBox.innerHTML='';
+    const NS='http://www.w3.org/2000/svg';
+    const svg = document.createElementNS(NS,'svg');
+    svg.setAttribute('viewBox','0 0 1200 800');
+    svg.setAttribute('preserveAspectRatio','none');
+    svg.style.width='100%'; svg.style.height='100%';
+    const style = document.createElementNS(NS,'style');
+    style.textContent='@keyframes spin{to{transform:rotate(360deg)}}';
+    const hand = document.createElementNS(NS,'rect');
+    hand.setAttribute('x','597'); hand.setAttribute('y','200');
+    hand.setAttribute('width','6'); hand.setAttribute('height','380'); hand.setAttribute('rx','3');
+    hand.setAttribute('fill','rgba(126,234,255,.85)');
+    hand.style.transformOrigin='600px 400px'; hand.style.animation='spin 12s linear infinite';
+    svg.appendChild(style); svg.appendChild(hand); clockBox.appendChild(svg);
+  }
+
+  window.addEventListener('resize', layoutNodes);
+  layoutNodes(); drawClock(); ensureHero();
 })();
