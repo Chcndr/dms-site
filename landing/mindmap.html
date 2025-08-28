@@ -22,25 +22,40 @@ svg{width:100%;height:auto;display:block;border-radius:16px;border:1px solid rgb
 /* nascondi collegamenti + cerchi indipendentemente dal renderer */
 svg .edge, svg .link, svg .ring, svg [stroke-dasharray] { display:none !important; }
 
-/* Layer lancetta mappa */
-.mm-hand-layer{ position:fixed; inset:0; z-index:1; pointer-events:none; }
-.mm-tick{ stroke:rgba(220,245,255,.6); stroke-width:2; stroke-linecap:round }
-#mmHand{ stroke:rgba(255,255,255,.95); stroke-width:3; stroke-linecap:round }
-#mmTip{ fill:#e6ecee }
+/* nascondi edges/cerchi del renderer, qualunque classe abbiano */
+.mindmap-stage svg line         { display:none !important; }   /* edges */
+.mindmap-stage svg path[fill="none"] { display:none !important; } /* anelli/curve */
+.mindmap-stage svg circle[fill="none"] { display:none !important; }
+
+/* contenitore node deve poter ospitare l'overlay */
+.mindmap-stage .node, .mindmap-stage [role="node"] { position: relative; }
+
+/* mini-orologio in alto a sinistra del pulsante */
+.mini-clock{
+  position:absolute; top:6px; left:6px; width:18px; height:18px;
+  opacity:.85; pointer-events:none;
+}
+.mini-clock .dial{ fill:none; stroke:rgba(255,255,255,.22); stroke-width:1.5 }
+.mini-clock .hand{ stroke:rgba(255,255,255,.92); stroke-width:1.5; stroke-linecap:round;
+  transform-origin:9px 9px; animation:spin 4s linear infinite }
+.mini-clock .tip{ fill:rgba(255,255,255,.92) }
+@keyframes spin { to { transform: rotate(360deg) } }
+
+/* il pannello centrale deve coprire mini-clock e qualsiasi residuo */
+.center-slot, .mindmap-center, .info-panel {
+  position:relative; z-index:50; pointer-events:auto;
+}
 
 .btn{
   appearance:none;border:none;cursor:pointer;padding:.55rem .9rem;border-radius:12px;
   color:#e6ecee;background:rgba(20,80,100,.68);border:2px solid rgba(255,255,255,.2);
   backdrop-filter:blur(6px);font:600 14px/1.2 system-ui,Segoe UI,Roboto,Helvetica,Arial,sans-serif;text-decoration:none
 }
-.btn-back{ position:fixed; left:20px; top:18px; z-index:1000 }
-.page-title{ margin-top:64px }
+.btn-back{ position:fixed; left:16px; top:16px; z-index:1000 }
 </style>
 </head>
 <body>
 
-<!-- Layer lancetta sotto al box centrale -->
-<svg id="mmHandLayer" class="mm-hand-layer" aria-hidden="true"></svg>
 
 <div class="wrap">
 <h1>🧠 DMS — Mappa Interattiva</h1>
@@ -73,7 +88,7 @@ const NODES = [
 ];
 const svg = document.getElementById('map'); const cx=600, cy=430, r=290;
 function E(n,a){const e=document.createElementNS('http://www.w3.org/2000/svg',n);for(const k in a)e.setAttribute(k,a[k]);return e;}
-svg.appendChild(E('g',{transform:`translate(${cx-160},${cy-70})`,class:'center'}))
+svg.appendChild(E('g',{transform:`translate(${cx-160},${cy-70})`,class:'center center-slot'}))
   .innerHTML = `<rect rx="18" ry="18" width="320" height="140" class="center"/>
                 <text x="160" y="58" text-anchor="middle"><tspan class="t">DMS · Hub di Prossimità</tspan><tspan x="160" dy="20" class="s">Pagamenti · Gemello GIS · Once-Only · ECC</tspan></text>`;
 NODES.forEach((n,i)=>{
@@ -96,38 +111,42 @@ document.getElementById('fallback').innerHTML = NODES.map(n=>`<span class="badge
 <script>
 // fallback: se il renderer usa classi diverse, spegniamo gli elementi disegnati
 window.addEventListener('load', () => {
-  document.querySelectorAll('svg .edge, svg .link, svg .ring, svg [stroke-dasharray]')
-    .forEach(el => el.style.display = 'none');
+  const s = document.querySelector('.mindmap-stage svg'); if(!s) return;
+  s.querySelectorAll('line, path, circle').forEach(el=>{
+    const fill = el.getAttribute('fill') || getComputedStyle(el).fill || '';
+    if (el.tagName === 'line' || fill === 'none' || fill === 'rgba(0, 0, 0, 0)') {
+      el.style.display = 'none';
+    }
+  });
 });
 </script>
 
 <script>
 (function(){
-  const svg = document.getElementById('mmHandLayer'); if(!svg) return;
-  function draw(){
-    const W=innerWidth, H=innerHeight; svg.setAttribute('viewBox',`0 0 ${W} ${H}`); svg.innerHTML='';
-    const cx=W/2, cy=H*0.50, a=Math.min(W*0.42, W/2-40), b=Math.min(H*0.30, H/2-80);
-    // tacche (se non le vuoi, commenta questo for)
-    for(let i=0;i<12;i++){
-      const t=-Math.PI/2+2*Math.PI*i/12, ix=cx+(a-14)*Math.cos(t), iy=cy+(b-14)*Math.sin(t),
-            ex=cx+a*Math.cos(t), ey=cy+b*Math.sin(t);
-      const ln=document.createElementNS('http://www.w3.org/2000/svg','line');
-      ln.setAttribute('x1',ix); ln.setAttribute('y1',iy); ln.setAttribute('x2',ex); ln.setAttribute('y2',ey);
-      ln.setAttribute('class','mm-tick'); svg.appendChild(ln);
-    }
-    const hand=document.createElementNS('http://www.w3.org/2000/svg','line');
-    hand.id='mmHand'; hand.setAttribute('x1',cx); hand.setAttribute('y1',cy); svg.appendChild(hand);
-    const tip=document.createElementNS('http://www.w3.org/2000/svg','polygon'); tip.id='mmTip'; svg.appendChild(tip);
-    let start=null; function anim(ts){
-      if(!start) start=ts; const T=12000, th=-Math.PI/2+2*Math.PI*((ts-start)%T)/T;
-      const px=cx+a*Math.cos(th)*0.95, py=cy+b*Math.sin(th)*0.95;
-      hand.setAttribute('x2',px); hand.setAttribute('y2',py);
-      const bx=cx+a*Math.cos(th)*0.86, by=cy+b*Math.sin(th)*0.86, nx=-Math.sin(th), ny=Math.cos(th), w=18;
-      tip.setAttribute('points',`${px},${py} ${bx+nx*w},${by+ny*w} ${bx-nx*w},${by-ny*w}`);
-      requestAnimationFrame(anim);
-    } requestAnimationFrame(anim);
+  const ns = 'http://www.w3.org/2000/svg';
+  function addMiniClock(el){
+    if(el.querySelector('.mini-clock')) return;
+    const svg = document.createElementNS(ns,'svg');
+    svg.setAttribute('class','mini-clock'); svg.setAttribute('viewBox','0 0 18 18');
+
+    const dial = document.createElementNS(ns,'circle');
+    dial.setAttribute('class','dial'); dial.setAttribute('cx','9'); dial.setAttribute('cy','9'); dial.setAttribute('r','8');
+    const hand = document.createElementNS(ns,'line');
+    hand.setAttribute('class','hand'); hand.setAttribute('x1','9'); hand.setAttribute('y1','9'); hand.setAttribute('x2','9'); hand.setAttribute('y2','2.8');
+    const tip = document.createElementNS(ns,'polygon');
+    tip.setAttribute('class','tip'); tip.setAttribute('points','9,1.4 7.9,3.6 10.1,3.6');
+
+    svg.appendChild(dial); svg.appendChild(hand); svg.appendChild(tip);
+    el.appendChild(svg);
   }
-  addEventListener('resize', draw); addEventListener('load', draw); draw();
+
+  function initClocks(){
+    document.querySelectorAll('.mindmap-stage .node, .mindmap-stage [role="node"]').forEach(addMiniClock);
+  }
+
+  window.addEventListener('load', initClocks);
+  // nel caso i nodi vengano rigenerati in ritardo
+  setTimeout(initClocks, 300);
 })();
 </script>
 </body>
