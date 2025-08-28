@@ -46,21 +46,47 @@ svg .edge, svg .link, svg .ring, svg [stroke-dasharray] { display:none !importan
   position:relative; z-index:50; pointer-events:auto;
 }
 
+/* header fisso nello strato di pagina */
+.page-header{
+  position:fixed; top:12px; left:12px; right:12px;
+  display:flex; align-items:center; gap:12px;
+  z-index:1100; /* sopra allo stage e ai nodi */
+}
+.page-header .title{
+  margin:0; font:600 18px/1.2 system-ui,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
+  color:#e6ecee; letter-spacing:.2px;
+}
+
+/* spaziatura per non coprire la mappa */
+.page-content{ padding-top:64px; }
+
+/* layering dello stage */
+.mindmap-stage, #mindmapCanvas, .mindmap-wrapper{ position:relative; z-index:2; }
+
+/* pulsanti sopra e sotto la mappa */
+.chips-top, .chips-bottom{
+  position:sticky; z-index:1100; pointer-events:auto;
+}
+.chips-top{ top:64px; margin-bottom:8px; }
+.chips-bottom{ bottom:0; margin-top:8px; padding-bottom: max(12px, env(safe-area-inset-bottom)); }
+
 .btn{
   appearance:none;border:none;cursor:pointer;padding:.55rem .9rem;border-radius:12px;
   color:#e6ecee;background:rgba(20,80,100,.68);border:2px solid rgba(255,255,255,.2);
   backdrop-filter:blur(6px);font:600 14px/1.2 system-ui,Segoe UI,Roboto,Helvetica,Arial,sans-serif;text-decoration:none
 }
-.btn-back{ position:fixed; left:16px; top:16px; z-index:1000 }
 </style>
 </head>
 <body>
 
 
-<div class="wrap">
-<h1>🧠 DMS — Mappa Interattiva</h1>
+<header class="page-header">
+  <a href="./home.html" class="btn back">← Torna alla Home</a>
+  <h1 class="title">DMS — Mappa interattiva</h1>
+</header>
+
+<div class="wrap page-content">
 <p class="sub">Clicca un nodo per aprire il PDF.</p>
-<a href="./home.html" class="btn btn-back">← Torna alla Home</a>
 
 <div class="panel">
 <svg id="map" viewBox="0 0 1200 860" xmlns="http://www.w3.org/2000/svg"></svg>
