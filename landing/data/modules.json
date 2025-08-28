@@ -1,0 +1,15 @@
+[
+  {"id":1,"title":"Hub Nazionale del Commercio","when":"Q4 2025","law":"Programmi Hub, LG interoperabilità","ministry":"Regioni/Comuni, CLUST-ER","summary":"Presentazione dell'Hub e del ruolo di DMS.","data":"dataset HUB","output":"cruscotti, KPI","depends":"-","status":"ready","pdf":"./docs/hub-nazionale.pdf"},
+  {"id":2,"title":"DMS & CLUST-ER","when":"Q4 2025","law":"Cluster, innovazione territoriale","ministry":"Regione ER / CLUST-ER","summary":"Integrazione DMS con ecosistema regionale.","data":"HUB dataset","output":"schede modulo","depends":"-","status":"ready","pdf":"./docs/dms-e-cluster.pdf"},
+  {"id":3,"title":"Video • Teaser Hub","when":"-","law":"-","ministry":"-","summary":"Teaser video.","data":"-","output":"-","depends":"-","status":"soon","pdf":"#"},
+  {"id":4,"title":"Video • Riaccendiamo","when":"-","law":"-","ministry":"-","summary":"Hero video.","data":"-","output":"-","depends":"-","status":"soon","pdf":"#"},
+  {"id":5,"title":"Modulo 5","when":"-","law":"-","ministry":"-","summary":"· presto","data":"-","output":"-","depends":"-","status":"soon","pdf":"#"},
+  {"id":6,"title":"Modulo 6","when":"-","law":"-","ministry":"-","summary":"· presto","data":"-","output":"-","depends":"-","status":"soon","pdf":"#"},
+  {"id":7,"title":"Modulo 7","when":"-","law":"-","ministry":"-","summary":"· presto","data":"-","output":"-","depends":"-","status":"soon","pdf":"#"},
+  {"id":8,"title":"Modulo 8","when":"-","law":"-","ministry":"-","summary":"· presto","data":"-","output":"-","depends":"-","status":"soon","pdf":"#"},
+  {"id":9,"title":"Modulo 9","when":"-","law":"-","ministry":"-","summary":"· presto","data":"-","output":"-","depends":"-","status":"soon","pdf":"#"},
+  {"id":10,"title":"Modulo 10","when":"-","law":"-","ministry":"-","summary":"· presto","data":"-","output":"-","depends":"-","status":"soon","pdf":"#"},
+  {"id":11,"title":"Modulo 11","when":"-","law":"-","ministry":"-","summary":"· presto","data":"-","output":"-","depends":"-","status":"soon","pdf":"#"},
+  {"id":12,"title":"Modulo 12","when":"-","law":"-","ministry":"-","summary":"· presto","data":"-","output":"-","depends":"-","status":"soon","pdf":"#"}
+]
+
