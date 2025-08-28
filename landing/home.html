@@ -2,32 +2,26 @@
 <html lang="it">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>DMS — Gemello Digitale (Home)</title>
   <link rel="stylesheet" href="app.css" />
 </head>
 <body>
-  <div class="toolbar">
-    <a class="btn" href="./index.html">🎬 Spot</a>
-    <a class="btn" href="./mindmap.html">🧠 Mappa</a>
-  </div>
-
-  <h1 class="claim"><b>GEMELLO DIGITALE</b><b>DEL COMMERCIO</b><small>DMS • Orologio roadmap</small></h1>
-
-  <main id="stage" class="stage">
-    <!-- orologio/ellisse sotto tutto -->
-    <div id="clock" aria-hidden="true"></div>
-
-    <!-- 12 pulsanti nell'ellisse -->
-    <div id="nodes" class="nodes"></div>
-
-    <!-- viewport sopra ai pulsanti -->
-    <div id="viewport" class="viewport">
-      <video id="hero" class="hero-video"
-             autoplay muted playsinline webkit-playsinline preload="auto">
-        <source src="videos/video-hero.mp4" type="video/mp4">
-      </video>
+  <main class="page">
+    <div class="badges">
+      <span class="badge">PDF</span>
+      <a class="chip" href="./index.html">🎬 Spot</a>
+      <a class="chip" href="./mindmap.html">🧠 Mappa</a>
+      <span class="badge">PDF</span>
     </div>
+
+    <h2 class="page-title">GEMELLO DIGITALE DEL COMMERCIO — DMS • Orologio roadmap</h2>
+
+    <section class="hero">
+      <div class="media-16x9">
+        <video src="videos/video-hero.mp4" autoplay muted loop playsinline></video>
+      </div>
+    </section>
   </main>
 
   <script src="app.js"></script>
