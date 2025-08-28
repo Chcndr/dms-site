@@ -1,255 +1,72 @@
-/* Reset base */
-* { box-sizing: border-box; margin: 0; padding: 0; }
-html { -webkit-text-size-adjust: 100%; }
-body { 
-  font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, 'Helvetica Neue', Arial, sans-serif;
-  background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%);
-  color: #f8fafc;
-  min-height: 100vh;
+/* ===== Reset essenziale e base ===== */
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+html,body{height:100%}
+body{
+  margin:0;
+  font-family:system-ui,-apple-system,"Segoe UI",Roboto,Ubuntu,"Helvetica Neue",Arial,sans-serif;
+  color:#eef6fb;
+  background: radial-gradient(1200px 600px at 30% 0%, #203243 0%, #172B3A 40%, #112534 100%);
 }
 
-/* WRAPPER ESISTENTE - NON MODIFICARE DIMENSIONI */
-.wrap {
-  position: relative;
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 20px;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-}
-
-/* Badge bar in alto a sinistra */
-.badge-bar {
-  position: absolute;
-  top: 20px;
-  left: 20px;
-  display: flex;
-  gap: 12px;
-  z-index: 100;
-}
-
-.chip {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 8px 16px;
-  border-radius: 12px;
-  border: 1px solid #1e6a80;
-  background: rgba(255,255,255,0.06);
-  backdrop-filter: saturate(140%) blur(4px);
-  color: #eaf6fb;
-  text-decoration: none;
-  font-weight: 600;
-  white-space: nowrap;
-}
-
-/* Titolo in alto a destra */
-.page-title {
-  position: absolute;
-  top: 20px;
-  right: 20px;
-  font-size: clamp(18px, 2vw, 24px);
-  font-weight: 800;
-  text-align: right;
-  line-height: 1.2;
-  z-index: 100;
-}
-
-/* HERO: deve stare DENTRO lo stesso wrapper */
-.hero { 
-  margin: 0;
-  position: relative;
-  z-index: 30;
-}
-
-.media-16x9 {
-  position: relative;
-  width: 100%;              /* = larghezza del wrapper (uguale ai pulsanti) */
-  aspect-ratio: 16/9;
-  border-radius: 16px;
-  overflow: hidden;
-  background: #000;
-  box-shadow: 0 0 0 1px rgba(255,255,255,0.06), 0 16px 60px rgba(0,0,0,0.5);
-}
-
-.media-16x9 video {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-/* Container per i 12 pulsanti PDF */
-.nodes-container {
-  position: absolute;
-  inset: 0;
-  z-index: 20;
-  pointer-events: none;
-}
-
-.nodes {
-  position: relative;
-  width: 100%;
-  height: 100%;
-}
-
-.node {
-  position: absolute;
-  width: 108px;
-  height: 108px;
-  border-radius: 16px;
-  display: grid;
-  place-items: center;
-  background: rgba(255,255,255,0.04);
-  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.10), 0 6px 24px rgba(0,0,0,0.30);
-  backdrop-filter: blur(3px);
-  transition: 0.2s transform, 0.2s box-shadow;
-  color: #eaf6fb;
-  text-decoration: none;
-  font-weight: 700;
-  pointer-events: auto;
-}
-
-.node:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 0 0 1px rgba(126,234,255,0.5), 0 0 18px rgba(126,234,255,0.35), 0 6px 24px rgba(0,0,0,0.4);
-}
-
-/* Lancetta */
-.clock-hand {
-  position: absolute;
-  inset: 0;
-  z-index: 1;
-  pointer-events: none;
-}
-
-.clock-hand::after {
-  content: '';
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 200px;
-  height: 2px;
-  background: rgba(126,234,255,0.85);
-  transform-origin: 0 50%;
-  transform: translate(0, -50%) rotate(0deg);
-  animation: spin 12s linear infinite;
-}
-
-@keyframes spin {
-  to { transform: translate(0, -50%) rotate(360deg); }
-}
-
-/* Salvaguardia: sotto 1600px niente absolute/transform/margini strani */
-@media (max-width: 1600px) {
-  .badge-bar, .page-title, .hero {
-    position: static !important;
-    transform: none !important;
-    margin-left: 0 !important;
-    margin-right: 0 !important;
-  }
-  
-  /* Su mobile riorganizza il layout */
-  .wrap {
-    flex-direction: column;
-    justify-content: flex-start;
-    padding-top: 80px;
-  }
-  
-  .badge-bar {
-    position: relative;
-    top: auto;
-    left: auto;
-    margin-bottom: 20px;
-  }
-  
-  .page-title {
-    position: relative;
-    top: auto;
-    right: auto;
-    text-align: center;
-    margin-bottom: 20px;
-  }
-  
-  .nodes-container {
-    display: none; /* Nascondi i nodi su mobile */
-  }
-  
-  .clock-hand {
-    display: none; /* Nascondi la lancetta su mobile */
-  }
-}
-
-@media (max-width: 900px) {
-  .node { width: 88px; height: 88px; }
-  .wrap { padding: 16px; }
-}
-
-
-/* ——— MOBILE SANITY PATCH (non cambia la larghezza del wrapper) ——— */
-:root{ --wrap-max:1200px; --pad-x:16px; }
-html{ -webkit-text-size-adjust:100%; } /* evita zoom testi su iOS */
-
+/* ===== Wrapper comune (NON CAMBIARE larghezza) ===== */
 .wrap{
-  max-width:var(--wrap-max);
-  width:100%;
+  /* Lasciare questa misura: è l'impostazione "perfetta" precedente */
+  max-width:1200px;               /* 👈 se prima era 1200 resta 1200 */
   margin:0 auto;
-  padding-left:calc(var(--pad-x) + env(safe-area-inset-left));
-  padding-right:calc(var(--pad-x) + env(safe-area-inset-right));
+  padding:16px calc(16px + env(safe-area-inset-right))
+          32px calc(16px + env(safe-area-inset-left));
 }
 
-.badge-bar{ display:flex; flex-wrap:wrap; gap:10px; }
-.chip{ white-space:nowrap; }
+/* ===== Chip / pulsanti ===== */
+.badge-bar{
+  display:flex; flex-wrap:wrap; gap:10px;
+  align-items:center; margin:0 0 10px 0;
+}
+.chip{
+  display:inline-flex; align-items:center; gap:.5rem;
+  padding:.5rem .8rem; border-radius:12px;
+  border:1px solid #2a7f96;
+  background:rgba(255,255,255,.08);
+  text-decoration:none; color:#eaf6fb; font-weight:700;
+  box-shadow:0 1px 0 rgba(0,0,0,.25), inset 0 1px 0 rgba(255,255,255,.06);
+}
 
+/* ===== Titolo ===== */
 .page-title{
-  margin:10px 0 14px;
-  font-weight:800; line-height:1.2;
-  font-size:clamp(20px,4.2vw,34px); /* titolo scala bene anche su iPhone */
+  margin:8px 0 14px; font-weight:900; line-height:1.15;
+  font-size:clamp(22px, 3vw, 42px);
+  text-wrap:balance; /* distribuisce meglio su 2 righe */
 }
 
-/* HERO: dentro al wrapper, mai full-bleed */
-.hero{ margin:12px 0 0; }
-
-/* Contenitore 16:9 con fallback iPad */
+/* ===== Hero video DENTRO al wrapper ===== */
+.hero{ margin:0; }
 .media-16x9{
   position:relative; width:100%;
   border-radius:16px; overflow:hidden; background:#000;
-  min-height:300px; /* Fallback per evitare altezza zero su iPad */
+  box-shadow: 0 12px 30px rgba(0,0,0,.35);
 }
-/* Fallback altezza: evita "0px" su iOS quando il video non è pronto */
+/* Fallback altezza (iPad/IOS quando il video non è pronto) */
 .media-16x9::before{
   content:""; display:block; padding-top:56.25%; /* 16:9 */
 }
+.media-16x9.is-ready::before{ padding-top:0; }
 
-/* Media pieno contenitore */
 .media-16x9 video{
   position:absolute; inset:0; width:100%; height:100%;
   object-fit:cover; display:block; border:0;
 }
 
-/* Tablet */
-@media (max-width:1024px){
-  .chip{ padding:.5rem .9rem; }
-}
-
-/* Telefono */
-@media (max-width:768px){
-  :root{ --pad-x:14px; }
-  .badge-bar{ gap:8px; }
-  .page-title{ font-size:clamp(18px,5vw,28px); }
-
-  /* annulla eventuali absolute/transform iniettati da vecchio CSS */
-  [style*="position:absolute"], .abs{
+/* ===== Guardrail anti-regressione sotto 1600px ===== */
+@media (max-width:1600px){
+  .badge-bar, .page-title, .hero{
     position:static !important; transform:none !important;
-    left:auto !important; right:auto !important; top:auto !important;
     margin-left:0 !important; margin-right:0 !important;
   }
+}
 
-  /* l'hero non supera l'altezza utile su iPhone */
-  .media-16x9{ max-height:calc(100svh - 220px); }
+/* ===== Accessibilità ===== */
+@media (prefers-reduced-motion: reduce){
+  .media-16x9 video{ animation:none }
 }
 

@@ -1,31 +1,40 @@
 <!doctype html>
 <html lang="it">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <title>DMS — Gemello Digitale (Home)</title>
-  <link rel="stylesheet" href="app.css" />
+  <meta charset="utf-8">
+  <title>DMS – Gemello Digitale del Commercio</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <link rel="stylesheet" href="app.css">
 </head>
 <body>
-  <div class="wrap"><!-- WRAPPER ESISTENTE: NON CAMBIARE -->
-    <nav class="badge-bar">
+  <main class="wrap">
+    <nav class="badge-bar" aria-label="Azioni principali">
       <a class="chip" href="#pdf1">PDF</a>
-      <a class="chip" href="./index.html">🎬 Spot</a>
-      <a class="chip" href="./mindmap.html">🧠 Mappa</a>
+      <a class="chip" href="#spot">🎬 Spot</a>
+      <a class="chip" href="#mappa">🗺️ Mappa</a>
       <a class="chip" href="#pdf2">PDF</a>
     </nav>
 
-    <h1 class="page-title">GEMELLO DIGITALE DEL COMMERCIO — DMS • Orologio roadmap</h1>
+    <h1 class="page-title">
+      GEMELLO DIGITALE DEL COMMERCIO — DMS • Orologio&nbsp;roadmap
+    </h1>
 
     <!-- HERO: DEVE STARE DENTRO LO STESSO WRAPPER -->
-    <section class="hero">
+    <section class="hero" aria-label="Video introduttivo">
       <div class="media-16x9">
-        <!-- poster = prima immagine se autoplay non parte -->
-        <video src="videos/video-hero.mp4"
-               preload="metadata" autoplay muted loop playsinline webkit-playsinline></video>
+        <video
+          src="videos/video-hero.mp4"
+          poster="images/hero-poster.jpg"
+          preload="metadata"
+          muted
+          autoplay
+          loop
+          playsinline
+          webkit-playsinline
+        ></video>
       </div>
     </section>
-  </div>
+  </main>
 
   <script src="app.js"></script>
 </body>
