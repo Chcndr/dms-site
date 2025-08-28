@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DMS — Gemello Digitale (safe)</title>
+<style>
+:root{
+  --bg1:#0c3e45; --bg2:#125965; --text:#dfe9e9; --muted:#9fb6b9;
+  --accent:#5cf2ff; --accent2:rgba(92,242,255,.28);
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0; font:16px/1.4 system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;
+  color:var(--text); background: radial-gradient(1200px 800px at 70% -10%, var(--bg2), var(--bg1));
+}
+header{
+  position:fixed; inset:16px auto auto 16px; z-index:40; display:flex; gap:10px; align-items:center;
+}
+header .btn{
+  display:inline-flex; align-items:center; gap:8px; padding:10px 14px; border-radius:12px;
+  background: rgba(255,255,255,.06); color:#ecffff; text-decoration:none; backdrop-filter: blur(6px);
+  border:1px solid rgba(255,255,255,.08);
+  box-shadow: 0 10px 24px rgba(0,0,0,.25);
+}
+header .btn:hover{ box-shadow:0 18px 40px rgba(0,0,0,.35), 0 0 14px var(--accent2) inset }
+
+h1{
+  position:fixed; right:16px; top:18px; margin:0; z-index:40;
+  font-weight:700; letter-spacing:.02em; text-align:right;
+  text-shadow:0 2px 0 rgba(0,0,0,.35);
+}
+h1 small{display:block; font-weight:500; color:var(--muted)}
+
+main{ min-height:100%; display:grid; place-items:center; padding:96px 24px 48px }
+
+/* ring + nodes */
+.stage{ position:relative; width:min(1100px, 96vw); aspect-ratio:16/9; }
+.ring{
+  position:absolute; inset:0; display:grid; place-items:center;
+  pointer-events:none; /* il ring non intercetta click */
+}
+.nodes{
+  position:absolute; inset:0; margin:auto; width:min(84vmin, 820px); aspect-ratio:1/1;
+  pointer-events:none; /* i bottoni sì */
+}
+.node{
+  --i:0; --R: min(34vw, 420px);
+  position:absolute; left:50%; top:50%; width:clamp(72px, 9vmin, 120px); height:clamp(72px, 9vmin, 120px);
+  transform:
+    rotate(calc(var(--i)*30deg))
+    translate(var(--R))
+    rotate(calc(var(--i)*-30deg));
+  transform-origin: center;
+  display:grid; place-items:center; border-radius:16px;
+  background:rgba(255,255,255,.04); color:#e9feff; text-decoration:none; font-weight:600;
+  border:1px solid rgba(255,255,255,.09);
+  box-shadow:0 14px 26px rgba(0,0,0,.28), 0 0 0 1px rgba(255,255,255,.05) inset;
+  pointer-events:auto; transition:transform .18s ease, box-shadow .2s ease, background .2s ease;
+}
+.node:hover{
+  transform:
+    rotate(calc(var(--i)*30deg)) translate(calc(var(--R) + 6px)) rotate(calc(var(--i)*-30deg));
+  background:rgba(0,208,255,.10);
+  box-shadow:
+    0 22px 48px rgba(0,0,0,.4),
+    0 0 18px rgba(92,242,255,.35),
+    0 0 0 1px rgba(92,242,255,.32) inset;
+}
+.node.tag{ font-size:.9rem; color:#cfe7ea }
+
+/* viewport (video) */
+.viewport{
+  position:absolute; inset:0; margin:auto; width:min(90%, 980px); aspect-ratio:16/9;
+  border-radius:18px; overflow:hidden; z-index:30;
+  box-shadow: 0 22px 60px rgba(0,0,0,.40);
+}
+.viewport::before{
+  content:""; position:absolute; inset:-6%; border-radius:24px; z-index:-1; pointer-events:none;
+  background:
+    radial-gradient(140% 120% at 50% 50%, rgba(92,242,255,.22), transparent 62%),
+    radial-gradient(80% 60%  at 50% 50%, rgba(255,255,255,.07), transparent 70%);
+  filter: blur(14px);
+}
+.viewport video, .viewport iframe{
+  width:100%; height:100%; display:block; object-fit:cover; background: #0a3035;
+}
+
+/* responsive fine-tuning */
+@media (max-width: 860px){
+  .viewport{ width:min(94%, 760px) }
+}
+</style>
+</head>
+<body>
+  <header>
+    <a class="btn" href="../index.html">🎬 Spot</a>
+    <a class="btn" href="./mindmap.html">🧠 Mappa</a>
+  </header>
+  <h1>GEMELLO DIGITALE<br><small>DMS • Orologio roadmap (safe)</small></h1>
+
+  <main>
+    <div class="stage">
+
+      <!-- cerchio con 12 nodi -->
+      <div class="ring">
+        <div class="nodes">
+          <!-- indicizza 12 posizioni: 0..11 -->
+          <a class="node" style="--i:0"  href="./docs/hub-nazionale.pdf" target="_blank" title="Hub Nazionale (PDF)">PDF</a>
+          <a class="node" style="--i:1"  href="./docs/dms-e-cluster.pdf" target="_blank" title="DMS & CLUST-ER (PDF)">PDF</a>
+          <a class="node" style="--i:2"  href="#" title="Prossimamente"   class="node tag">•</a>
+          <a class="node" style="--i:3"  href="#" title="Prossimamente"   class="node tag">•</a>
+          <a class="node" style="--i:4"  href="#" title="Prossimamente"   class="node tag">•</a>
+          <a class="node" style="--i:5"  href="#" title="Prossimamente"   class="node tag">•</a>
+          <a class="node" style="--i:6"  href="#" title="Prossimamente"   class="node tag">•</a>
+          <a class="node" style="--i:7"  href="#" title="Prossimamente"   class="node tag">•</a>
+          <a class="node" style="--i:8"  href="#" title="Prossimamente"   class="node tag">•</a>
+          <a class="node" style="--i:9"  href="#" title="Prossimamente"   class="node tag">•</a>
+          <a class="node" style="--i:10" href="#" title="Prossimamente"   class="node tag">•</a>
+          <a class="node" style="--i:11" href="#" title="Prossimamente"   class="node tag">•</a>
+        </div>
+      </div>
+
+      <!-- finestra centrale -->
+      <div id="viewport" class="viewport">
+        <video id="hero" muted playsinline autoplay loop
+               src="./videos/video-hero.mp4"
+               poster="../assets/italy.svg"></video>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- JS facoltativo: se c'è, carica PDF/Video dentro al riquadro invece che in nuova scheda -->
+  <script>
+    (function(){
+      // se qualcosa va storto, i <a> aprono in nuova scheda: tutto funziona lo stesso.
+      const vp = document.getElementById('viewport');
+      const nodes = document.querySelectorAll('.nodes .node');
+      nodes.forEach(a=>{
+        a.addEventListener('click', (e)=>{
+          const href = a.getAttribute('href')||'#';
+          if(href.endsWith('.pdf')){
+            e.preventDefault();
+            vp.innerHTML = '<iframe title="Documento" src="'+href+'#view=fitH" loading="lazy"></iframe>';
+          }
+          else if(href.endsWith('.mp4')){
+            e.preventDefault();
+            vp.innerHTML = '<video muted playsinline autoplay controls src="'+href+'"></video>';
+          }
+        });
+      });
+      // tentativo di forzare autoplay su iOS quando si torna indietro
+      window.addEventListener('pageshow', ()=>{
+        const v = document.getElementById('hero');
+        if(v && v.paused){ v.play().catch(()=>{}); }
+      });
+    })();
+  </script>
+</body>
+</html>
+
