@@ -1,6 +1,6 @@
 // ===== 1) VIDEO AUTOPLAY iOS SAFE =====
 function ensureHero() {
-  const v = document.getElementById('hero');
+  const v = document.querySelector('#viewport video');
   if (!v) return;
   
   function playSafe() {
@@ -31,10 +31,38 @@ function ensureHero() {
   }, {once: true});
 }
 
-// ===== 2) POSIZIONA 12 PULSANTI SU ELLISSE =====
+// ===== 2) ANIMAZIONE LANCETTA =====
+function animateHand() {
+  const hand = document.getElementById('hand');
+  const handTip = document.getElementById('handTip');
+  if (!hand || !handTip) return;
+  
+  let angle = 0;
+  const centerX = 683;
+  const centerY = 455.5;
+  const radius = 200;
+  
+  function updateHand() {
+    const radians = (angle * Math.PI) / 180;
+    const x = centerX + radius * Math.cos(radians - Math.PI/2);
+    const y = centerY + radius * Math.sin(radians - Math.PI/2);
+    
+    hand.setAttribute('x2', x);
+    hand.setAttribute('y2', y);
+    
+    // Update hand tip
+    const tipPoints = `${x},${y} ${x+2.07},${y+31.7} ${x-34.6},${y+21.98}`;
+    handTip.setAttribute('points', tipPoints);
+    
+    angle = (angle + 0.5) % 360; // 12 secondi per giro completo (360/0.5 = 720 frames = 12s a 60fps)
+  }
+  
+  setInterval(updateHand, 16.67); // ~60fps
+}
+
+// ===== 3) POSIZIONA 12 PULSANTI COME NEL SINGLEFILE =====
 function buildNodes() {
-  const container = document.getElementById('nodes-container');
-  if (!container) return;
+  const body = document.body;
   
   const items = [
     {label: 'PDF', href: 'docs/hub-nazionale.pdf'},
@@ -45,71 +73,58 @@ function buildNodes() {
     {label: '· presto'}, {label: '· presto'}, {label: '· presto'}, {label: '· presto'}
   ];
   
-  function positionNodes() {
-    container.innerHTML = '';
+  // Posizioni esatte dal SingleFile originale (ellisse stretta attorno al video)
+  const positions = [
+    {left: 673, top: 125},    // 12 o'clock
+    {left: 928, top: 162},    // 1 o'clock  
+    {left: 1151, top: 269},   // 2 o'clock
+    {left: 1233, top: 415},   // 3 o'clock
+    {left: 1151, top: 561},   // 4 o'clock
+    {left: 928, top: 668},    // 5 o'clock
+    {left: 673, top: 705},    // 6 o'clock
+    {left: 418, top: 668},    // 7 o'clock
+    {left: 195, top: 561},    // 8 o'clock
+    {left: 113, top: 415},    // 9 o'clock
+    {left: 195, top: 269},    // 10 o'clock
+    {left: 418, top: 162}     // 11 o'clock
+  ];
+  
+  items.forEach((item, i) => {
+    const node = document.createElement(item.href ? 'a' : 'button');
+    node.className = 'node';
+    node.innerHTML = `<span class="tag">${item.label || 'PDF'}</span>`;
     
-    const viewport = document.getElementById('viewport');
-    if (!viewport) return;
-    
-    const vRect = viewport.getBoundingClientRect();
-    const cx = vRect.left + vRect.width/2 + window.scrollX;
-    const cy = vRect.top + vRect.height/2 + window.scrollY;
-    
-    // Ellisse attorno al video
-    const rx = Math.min(vRect.width * 0.64, 420);
-    const ry = Math.max(vRect.height * 0.52, 180);
-    
-    items.forEach((item, i) => {
-      const node = document.createElement(item.href ? 'a' : 'button');
-      node.className = 'node';
-      node.innerHTML = `<span class="tag">${item.label || 'PDF'}</span>`;
-      
-      if (item.href) {
-        node.href = item.href;
-        if (item.href.endsWith('.pdf')) {
-          node.target = '_blank';
-        }
-      } else {
-        node.disabled = true;
-        node.style.opacity = '.55';
+    if (item.href) {
+      node.href = item.href;
+      if (item.href.endsWith('.pdf')) {
+        node.target = '_blank';
       }
-      
-      // Posizione angolare (12 slot da orologio)
-      const angle = (Math.PI * 2) * (i / 12) - Math.PI/2; // parte dall'alto
-      const x = cx + rx * Math.cos(angle) - 70; // 70 = half button width
-      const y = cy + ry * Math.sin(angle) - 70; // 70 = half button height
-      
-      node.style.left = x + 'px';
-      node.style.top = y + 'px';
-      
-      // Neon effects su hover/touch
-      node.addEventListener('pointerenter', () => node.classList.add('is-active'));
-      node.addEventListener('pointerleave', () => node.classList.remove('is-active'));
-      node.addEventListener('touchstart', () => {
-        node.classList.add('is-active');
-        setTimeout(() => node.classList.remove('is-active'), 1200);
-      }, {passive: true});
-      
-      container.appendChild(node);
-    });
-  }
-  
-  positionNodes();
-  
-  let resizeTimeout;
-  window.addEventListener('resize', () => {
-    clearTimeout(resizeTimeout);
-    resizeTimeout = setTimeout(positionNodes, 120);
-  });
-  
-  window.addEventListener('orientationchange', () => {
-    setTimeout(positionNodes, 200);
+    } else {
+      node.disabled = true;
+      node.style.opacity = '.55';
+    }
+    
+    // Posizione dal SingleFile
+    const pos = positions[i];
+    node.style.left = pos.left + 'px';
+    node.style.top = pos.top + 'px';
+    
+    // Neon effects
+    node.addEventListener('pointerenter', () => node.classList.add('is-active'));
+    node.addEventListener('pointerleave', () => node.classList.remove('is-active'));
+    node.addEventListener('touchstart', () => {
+      node.classList.add('is-active');
+      setTimeout(() => node.classList.remove('is-active'), 1200);
+    }, {passive: true});
+    
+    body.appendChild(node);
   });
 }
 
-// ===== 3) INIZIALIZZAZIONE =====
+// ===== 4) INIZIALIZZAZIONE =====
 document.addEventListener('DOMContentLoaded', () => {
   ensureHero();
+  animateHand();
   buildNodes();
 });
 

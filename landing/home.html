@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="it">
+<html lang="it" style="--btnW:123px">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -18,7 +18,6 @@
     <small>DMS • Orologio roadmap</small>
   </h1>
 
-  <!-- Orologio ellittico -->
   <svg id="ellipseLayer" class="ellipse-layer" aria-hidden="true" viewBox="0 0 1366 911">
     <g>
       <line x1="683" y1="163.76" x2="683" y2="145.76" class="tick"></line>
@@ -39,15 +38,11 @@
     </g>
   </svg>
 
-  <!-- Video viewport -->
-  <div id="viewport" class="viewport" role="region" aria-label="contenuti">
-    <video id="hero" autoplay muted playsinline webkit-playsinline preload="auto">
+  <div id="viewport" class="viewport" role="region" aria-label="contenuti" style="width:655.596089px;height:368.7728px;left:355.201956px;top:271.1136px">
+    <video autoplay muted playsinline webkit-playsinline preload="auto">
       <source src="videos/video-hero.mp4" type="video/mp4">
     </video>
   </div>
-
-  <!-- 12 pulsanti (creati da JS) -->
-  <div id="nodes-container"></div>
 
   <script src="app.js"></script>
 </body>
