@@ -1,0 +1,72 @@
+<svg viewBox="0 0 1000 1200" xmlns="http://www.w3.org/2000/svg">
+  <!-- Contorno Italia semplificato -->
+  <path id="it-outline" d="M520 180 C580 190 620 220 640 260 L660 300 C680 340 690 380 685 420 L680 460 C675 500 670 540 665 580 L660 620 C655 660 650 700 645 740 L640 780 C635 820 630 860 625 900 L620 940 C615 980 610 1020 605 1060 L600 1100 C590 1120 570 1130 550 1125 L520 1120 C490 1115 460 1110 430 1105 L400 1100 C370 1095 340 1090 320 1080 L300 1070 C280 1060 270 1040 275 1020 L280 1000 C285 980 290 960 295 940 L300 920 C305 900 310 880 315 860 L320 840 C325 820 330 800 335 780 L340 760 C345 740 350 720 355 700 L360 680 C365 660 370 640 375 620 L380 600 C385 580 390 560 395 540 L400 520 C405 500 410 480 415 460 L420 440 C425 420 430 400 435 380 L440 360 C445 340 450 320 455 300 L460 280 C465 260 470 240 475 220 L480 200 C485 190 500 185 520 180 Z" fill="none" stroke="currentColor" stroke-width="2" />
+
+  <!-- Collegamenti principali -->
+  <g id="it-links">
+    <line x1="520" y1="300" x2="460" y2="330" />
+    <line x1="520" y1="300" x2="585" y2="430" />
+    <line x1="520" y1="300" x2="560" y2="500" />
+    <line x1="560" y1="500" x2="540" y2="560" />
+    <line x1="540" y1="560" x2="600" y2="610" />
+    <line x1="540" y1="560" x2="565" y2="680" />
+    <line x1="565" y1="680" x2="660" y2="760" />
+    <line x1="565" y1="680" x2="620" y2="870" />
+    <line x1="620" y1="870" x2="760" y2="1030" />
+    <line x1="620" y1="870" x2="720" y2="1050" />
+    <line x1="370" y1="880" x2="620" y2="870" />
+    <line x1="585" y1="430" x2="560" y2="500" />
+    <line x1="600" y1="610" x2="660" y2="760" />
+  </g>
+
+  <!-- Nodi di rete -->
+  <g id="it-nodes">
+    <circle cx="480" cy="250" r="3" />
+    <circle cx="550" cy="280" r="3" />
+    <circle cx="600" cy="350" r="3" />
+    <circle cx="520" cy="400" r="3" />
+    <circle cx="580" cy="480" r="3" />
+    <circle cx="520" cy="530" r="3" />
+    <circle cx="580" cy="580" r="3" />
+    <circle cx="520" cy="630" r="3" />
+    <circle cx="600" cy="680" r="3" />
+    <circle cx="540" cy="730" r="3" />
+    <circle cx="580" cy="780" r="3" />
+    <circle cx="560" cy="830" r="3" />
+    <circle cx="600" cy="880" r="3" />
+    <circle cx="640" cy="930" r="3" />
+    <circle cx="680" cy="980" r="3" />
+    <circle cx="720" cy="1020" r="3" />
+    <circle cx="400" cy="820" r="3" />
+    <circle cx="420" cy="860" r="3" />
+    <circle cx="440" cy="900" r="3" />
+    <circle cx="460" cy="940" r="3" />
+    <circle cx="480" cy="980" r="3" />
+    <circle cx="500" cy="1020" r="3" />
+    <circle cx="520" cy="1060" r="3" />
+    <circle cx="540" cy="1100" r="3" />
+    <circle cx="560" cy="1140" r="3" />
+    <circle cx="580" cy="1180" r="3" />
+    <circle cx="600" cy="1220" r="3" />
+    <circle cx="620" cy="1260" r="3" />
+    <circle cx="640" cy="1300" r="3" />
+    <circle cx="660" cy="1340" r="3" />
+  </g>
+
+  <!-- Città principali -->
+  <g id="it-cities">
+    <circle class="city" cx="520" cy="300" r="3.5" data-name="Milano"/>
+    <circle class="city" cx="460" cy="330" r="3.5" data-name="Torino"/>
+    <circle class="city" cx="585" cy="430" r="3.5" data-name="Venezia"/>
+    <circle class="city" cx="560" cy="500" r="3.5" data-name="Bologna"/>
+    <circle class="city" cx="540" cy="560" r="3.5" data-name="Firenze"/>
+    <circle class="city" cx="600" cy="610" r="3.5" data-name="Ancona"/>
+    <circle class="city" cx="565" cy="680" r="3.5" data-name="Roma"/>
+    <circle class="city" cx="660" cy="760" r="3.5" data-name="Bari"/>
+    <circle class="city" cx="620" cy="870" r="3.5" data-name="Napoli"/>
+    <circle class="city" cx="760" cy="1030" r="3.5" data-name="Reggio Calabria"/>
+    <circle class="city" cx="370" cy="880" r="3.5" data-name="Cagliari"/>
+    <circle class="city" cx="720" cy="1050" r="3.5" data-name="Catania"/>
+  </g>
+</svg>
+

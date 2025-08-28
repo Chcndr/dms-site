@@ -29,13 +29,65 @@
     overflow:hidden;
   }
 
-  /* Sfondo Italia statico */
-  .bg-italy{
-    position:fixed; inset:0; z-index:0; pointer-events:none;
-    opacity:.24; filter:drop-shadow(0 8px 18px rgba(0,0,0,.35));
+  /* BACKGROUND ITALIA ANIMATA */
+  .bg-italy-anim{ position:fixed; inset:0; z-index:0; pointer-events:none; }
+
+  /* gradient di sfondo con movimento molto lento */
+  .bg-italy-anim .bg-gradient{
+    position:absolute; inset:-10%;
     background:
-      radial-gradient(1200px 800px at 60% 20%, rgba(255,255,255,.05), transparent 60%),
-      url("./assets/italy-gemello.png?v=14") no-repeat center 58%/min(1020px, 88vmin);
+      radial-gradient(120% 80% at 20% 10%, #0f3b44 0%, transparent 40%),
+      radial-gradient(100% 100% at 85% 90%, #0a2c33 0%, transparent 55%),
+      linear-gradient(180deg, #0a3a43, #0c2f35 60%, #0a2b31);
+    filter:contrast(1.02) saturate(1.04);
+    animation:pan 22s linear infinite;
+    opacity:.96;
+  }
+  @keyframes pan{
+    0%{transform:translate3d(0,0,0)}
+    50%{transform:translate3d(2%,-1.5%,0)}
+    100%{transform:translate3d(0,0,0)}
+  }
+
+  /* posizionamento Italia */
+  #italySVG{
+    position:absolute; right:3vw; bottom:-6vh;
+    width:min(1400px,95vw); height:auto;
+    opacity:.22;
+    filter:drop-shadow(0 0 10px rgba(92,242,255,.08));
+  }
+
+  /* stile interno SVG (via currentColor) */
+  .bg-italy-anim svg{ color:var(--neon); }
+  .bg-italy-anim svg #it-outline{ stroke-linecap:round; stroke-linejoin:round; }
+  .bg-italy-anim svg #it-links line{ stroke:var(--neon); stroke-opacity:.35; stroke-width:1.2; }
+  .bg-italy-anim svg #it-nodes circle{
+    fill:var(--neon); opacity:0;
+    filter:drop-shadow(0 0 6px rgba(92,242,255,.55));
+    transform-box:fill-box; transform-origin:center;
+  }
+  /* città con glow più visibile e pulse lento */
+  .bg-italy-anim svg #it-cities .city{
+    fill:var(--neon);
+    filter:drop-shadow(0 0 8px rgba(92,242,255,.75));
+    opacity:.0;
+  }
+
+  /* stato "acceso": breathing del contorno */
+  .bg-italy-anim.lit #it-outline{ animation:breath 6s ease-in-out infinite; }
+  @keyframes breath{
+    0%,100%{ opacity:.28; filter:blur(0) }
+    50%{    opacity:.38; filter:blur(.2px) }
+  }
+
+  /* spotlight che segue il mouse (mix-blend screen) */
+  .bg-italy-anim .spotlight{
+    position:absolute; inset:0;
+    background:
+      radial-gradient(320px 220px at var(--mx,50%) var(--my,50%), rgba(92,242,255,.14), transparent 60%),
+      radial-gradient(160px 120px at var(--mx,50%) var(--my,50%), rgba(255,255,255,.04), transparent 70%);
+    mix-blend-mode:screen;
+    opacity:0; transition:opacity .25s ease;
   }
 
   /* isola lo stacking della pagina */
@@ -182,13 +234,20 @@
 
   @media (prefers-reduced-motion: reduce){
     .home-orologio .node, .home-orologio .node::before{ transition:none !important; }
+    .bg-italy-anim .bg-gradient{ animation:none; }
+    .bg-italy-anim.lit #it-outline{ animation:none; }
+    .bg-italy-anim .spotlight{ display:none; }
   }
 </style>
 </head>
 <body class="home-orologio">
 
-  <!-- Italia statica sotto a tutto -->
-  <div class="bg-italy" aria-hidden="true"></div>
+  <!-- BACKGROUND ITALIA ANIMATA -->
+  <div class="bg-italy-anim" aria-hidden="true">
+    <div class="bg-gradient"></div>
+    <object id="italySVG" type="image/svg+xml" data="./assets/italy-outline.svg"></object>
+    <div class="spotlight"></div>
+  </div>
 
   <div class="toolbar">
     <a class="btn" href="./index.html">🎬 Spot</a>
@@ -369,6 +428,98 @@
 ns.forEach(n=>{ if(n.getAttribute('aria-disabled')==='true') return;
   n.addEventListener('click',()=>ns.forEach(m=>m.classList.toggle('is-active',m===n)));
 });})();
+</script>
+
+<script>
+(function(){
+  const container = document.querySelector('.bg-italy-anim');
+  const obj = document.getElementById('italySVG');
+  const spot = container.querySelector('.spotlight');
+
+  function animateSvg(doc){
+    const outline = doc.getElementById('it-outline');
+    const linksG  = doc.getElementById('it-links');
+    const nodesG  = doc.getElementById('it-nodes');
+    const citiesG = doc.getElementById('it-cities');
+    if(!outline) return;
+
+    // 1) Draw del contorno
+    const L = outline.getTotalLength();
+    outline.style.strokeDasharray = L;
+    outline.style.strokeDashoffset = L;
+    outline.style.transition = 'stroke-dashoffset 1200ms ease';
+    requestAnimationFrame(()=>{ outline.style.strokeDashoffset = '0'; });
+
+    // 2) Collegamenti e nodi (stagger)
+    const links = linksG ? [...linksG.querySelectorAll('line')] : [];
+    const nodes = nodesG ? [...nodesG.querySelectorAll('circle')] : [];
+    links.forEach((ln,i)=>{
+      ln.style.opacity = '0';
+      ln.style.transition = 'opacity 420ms ease';
+      setTimeout(()=>{ ln.style.opacity = '.35'; }, 250 + i*60);
+    });
+    nodes.forEach((c,i)=>{
+      c.style.opacity = '0';
+      c.style.transition = 'opacity 360ms ease, transform 360ms ease';
+      setTimeout(()=>{ c.style.opacity = '.95'; c.style.transform = 'scale(1.18)'; }, 600 + i*45);
+      setTimeout(()=>{ c.style.transform = 'scale(1)'; }, 980 + i*45);
+    });
+
+    // 3) Città (glow + pulse asincrono)
+    const cities = citiesG ? [...citiesG.querySelectorAll('.city')] : [];
+    cities.forEach((c,i)=>{
+      c.style.opacity = '0';
+      c.style.transition = 'opacity 400ms ease';
+      setTimeout(()=>{ c.style.opacity = '1'; }, 900 + i*70);
+      // pulse CSS
+      const d = (i%12)*0.7; // sfasamento
+      c.style.animation = `cityPulse 8s ease-in-out ${d}s infinite`;
+    });
+
+    // Stato finale: breathing del contorno
+    setTimeout(()=>{ container.classList.add('lit'); }, 1400);
+  }
+
+  // Spotlight mouse (desktop only)
+  function enableSpotlight(){
+    let raf; const root = container;
+    function move(e){
+      const x = e.clientX || (e.touches && e.touches[0].clientX);
+      const y = e.clientY || (e.touches && e.touches[0].clientY);
+      if(!x && !y) return;
+      if(!raf){
+        raf = requestAnimationFrame(()=>{
+          root.style.setProperty('--mx', x+'px');
+          root.style.setProperty('--my', y+'px');
+          raf = null;
+        });
+      }
+      spot.style.opacity = .9;
+    }
+    function leave(){ spot.style.opacity = 0; }
+    window.addEventListener('mousemove', move, {passive:true});
+    window.addEventListener('mouseleave', leave, {passive:true});
+    // disabilita su touch
+    window.addEventListener('touchstart', ()=>{ spot.style.display='none'; }, {once:true, passive:true});
+  }
+
+  // city pulse keyframes (inietta nel documento)
+  const kf = document.createElement('style');
+  kf.textContent = `
+    @keyframes cityPulse {
+      0%, 100% { transform:scale(1); filter:drop-shadow(0 0 8px rgba(92,242,255,.70)); }
+      50%      { transform:scale(1.12); filter:drop-shadow(0 0 12px rgba(92,242,255,.95)); }
+    }
+  `;
+  document.head.appendChild(kf);
+
+  // Init quando l'SVG è disponibile
+  obj.addEventListener('load', ()=> animateSvg(obj.contentDocument));
+  if (obj.contentDocument) animateSvg(obj.contentDocument);
+
+  // spotlight (rispetta reduce-motion via CSS)
+  enableSpotlight();
+})();
 </script>
 
 
