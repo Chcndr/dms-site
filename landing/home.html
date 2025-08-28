@@ -45,26 +45,35 @@
     100%{transform:translate(0,0)}
   }
 
-  /* ===== Retro-illuminazione viewport (finestra video) ===== */
-  .viewport, .hero{
-    position:relative;
-    z-index:30;
+  /* ——— RETRO-ILLUMINAZIONE FINESTRA VIDEO ——— */
+  .hero, .viewport{
+    position: relative; z-index: 30; border-radius: 16px;
     box-shadow: 0 20px 60px rgba(0,0,0,.35);
-    border-radius: 16px;
+    overflow: hidden;
   }
-  .viewport::before, .hero::before{
-    content:"";
-    position:absolute; inset:-4%;
-    border-radius: 20px;
+  .hero::before, .viewport::before{
+    content: ""; position: absolute; inset: -6%;
+    border-radius: 20px; z-index: -1; pointer-events: none;
     background:
       radial-gradient(140% 120% at 50% 50%, rgba(92,242,255,.22), transparent 60%),
       radial-gradient(80% 60%  at 50% 50%, rgba(255,255,255,.06), transparent 70%);
-    filter: blur(12px);
-    z-index:-1; opacity:.9; pointer-events:none;
+    filter: blur(14px); opacity: .9;
   }
+  .hero::after, .viewport::after{
+    content:""; position:absolute; inset:0; pointer-events:none;
+    box-shadow: inset 0 0 40px rgba(0,0,0,.35);
+    border-radius:16px;
+  }
+
+  /* ——— Z-INDEX DI SICUREZZA ——— */
+  .clock-layer{ z-index:1; pointer-events:none; }   /* orologio */
+  .nodes-layer{ z-index:20; }                       /* pulsanti */
 
   /* isola lo stacking della pagina */
   body, .content-layer{ position:relative; isolation:isolate; }
+
+  .viewport{
+    position:fixed; z-index:30;
 
   /* orologio SEMPRE sotto */
   .clock-layer, .ellipse-layer{
@@ -126,47 +135,45 @@
     stroke-width:3; stroke-linecap:round;
   }
 
-  /* ——— NEON SCOPED ALLA HOME (rafforzato) ——— */
-  .home-orologio .nodes-layer{ position:relative; z-index:20; }
-
-  .home-orologio .node{
-    /* NON modifichiamo width/height/posizione: restano quelli esistenti */
-    position:fixed; width:var(--btnW); height:var(--btnW);
-    border-radius:16px; z-index:2;
-    border:1.5px solid rgba(255,255,255,.22);
-    background:rgba(255,255,255,.04); color:#e6ecee;
-    display:grid; place-items:center;
-    backdrop-filter:blur(3px);
-    isolation:isolate;
+  /* ——— NEON PULSANTI ——— */
+  .node{
+    background: rgba(255,255,255,.04);
+    border-radius: 14px;
+    backdrop-filter: blur(3px);
     box-shadow:
       0 10px 24px rgba(0,0,0,.25),
       0 0 0 1px rgba(255,255,255,.08) inset;
-    transition: box-shadow .2s, transform .2s, background .2s;
+    transition: box-shadow .2s ease, transform .2s ease, background .2s ease;
   }
-
-  .home-orologio .node:hover{
+  .node:hover{
     transform: translateY(-2px);
-    background: rgba(0, 208, 255, .08);
+    background: rgba(0,208,255,.08);
     box-shadow:
       0 18px 48px rgba(0,0,0,.35),
       0 0 18px rgba(92,242,255,.35),
       0 0 0 1px rgba(92,242,255,.30) inset;
   }
-
-  .home-orologio .node.is-active{
-    background: rgba(0, 208, 255, .12);
+  .node.active{
+    background: rgba(0,208,255,.12);
     box-shadow:
-      0 20px 54px rgba(0,0,0,.4),
+      0 20px 54px rgba(0,0,0,.40),
       0 0 24px rgba(92,242,255,.45),
       0 0 0 1px rgba(92,242,255,.34) inset;
   }
 
-  /* Accessibilità focus senza spostare il layout */
-  .home-orologio .node:focus-visible{
-    outline:2px solid #8af7ff; outline-offset:3px;
+  /* ——— SPOTLIGHT MOUSE ——— */
+  .fx-mouse{
+    position: fixed; inset: 0;
+    z-index: 2; pointer-events: none;
+    mix-blend-mode: screen;
+    background:
+      radial-gradient(280px 200px at var(--mx,50%) var(--my,50%),
+                      rgba(92,242,255,.18), transparent 60%),
+      radial-gradient(120px 90px  at var(--mx,50%) var(--my,50%),
+                      rgba(255,255,255,.06), transparent 70%);
+    opacity: 0; transition: opacity .25s;
   }
-
-  .home-orologio .node .tag{ opacity:.9; font-weight:700; }
+  body.has-mouse .fx-mouse{ opacity: .9; }
 
   .viewport{
     position:fixed; z-index:3;
@@ -200,6 +207,9 @@
 <body class="home-orologio">
 
   <div class="bg-base" aria-hidden="true"></div>
+
+  <!-- Spotlight mouse -->
+  <div class="fx-mouse" aria-hidden="true"></div>
 
   <div class="toolbar">
     <a class="btn" href="./index.html">🎬 Spot</a>
@@ -380,6 +390,42 @@
 ns.forEach(n=>{ if(n.getAttribute('aria-disabled')==='true') return;
   n.addEventListener('click',()=>ns.forEach(m=>m.classList.toggle('is-active',m===n)));
 });})();
+</script>
+
+<script>
+  // Spotlight mouse (desktop)
+  (function(){
+    const fx = document.querySelector('.fx-mouse');
+    let raf;
+    function move(e){
+      const x = e.clientX || (e.touches && e.touches[0].clientX);
+      const y = e.clientY || (e.touches && e.touches[0].clientY);
+      if(!x && !y) return;
+      if(!raf){
+        raf = requestAnimationFrame(()=>{
+          fx.style.setProperty('--mx', x+'px');
+          fx.style.setProperty('--my', y+'px');
+          raf = null;
+        });
+      }
+      document.body.classList.add('has-mouse');
+    }
+    function leave(){ document.body.classList.remove('has-mouse'); }
+    window.addEventListener('mousemove', move, {passive:true});
+    window.addEventListener('mouseleave', leave, {passive:true});
+    window.addEventListener('touchstart', ()=>{ fx.style.display='none'; }, {once:true, passive:true});
+  })();
+
+  // Stato 'active' sui pulsanti quando selezionati
+  (function(){
+    const nodes = Array.from(document.querySelectorAll('.node'));
+    nodes.forEach(n=>{
+      n.addEventListener('click', ()=>{
+        nodes.forEach(x=>x.classList.remove('active'));
+        n.classList.add('active');
+      });
+    });
+  })();
 </script>
 
 
