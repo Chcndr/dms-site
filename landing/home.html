@@ -1,42 +1,55 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="it">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>DMS — Gemello Digitale del Commercio</title>
-  <link rel="preload" href="videos/video-hero.mp4" as="video" type="video/mp4">
-  <link rel="stylesheet" href="home.css">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>DMS — Gemello Digitale (Home)</title>
+  <link rel="stylesheet" href="app.css">
 </head>
-<body>
-  <div id="stage">
-    <nav class="toolbar">
-      <a class="btn" href="./index.html">🎬 Spot</a>
-      <a class="btn" href="./mindmap.html">🧠 Mappa</a>
-    </nav>
+<body class="home-orologio">
+  <div class="toolbar">
+    <a class="btn" href="./index.html">🎬 Spot</a>
+    <a class="btn" href="./mindmap.html">🧠 Mappa</a>
+  </div>
+  
+  <h1 class="claim">
+    <b>GEMELLO DIGITALE</b>
+    <b>DEL COMMERCIO</b>
+    <small>DMS • Orologio roadmap</small>
+  </h1>
 
-    <header class="title">
-      <div class="t1">GEMELLO DIGITALE</div>
-      <div class="t2">DEL COMMERCIO</div>
-      <div class="t3">DMS • Orologio roadmap</div>
-    </header>
+  <!-- Orologio ellittico -->
+  <svg id="ellipseLayer" class="ellipse-layer" aria-hidden="true" viewBox="0 0 1366 911">
+    <g>
+      <line x1="683" y1="163.76" x2="683" y2="145.76" class="tick"></line>
+      <line x1="988.18" y1="202.84574869992784" x2="997.18" y2="187.25729143180797" class="tick"></line>
+      <line x1="1211.5872654538698" y1="309.63" x2="1227.1757227219898" y2="300.63" class="tick"></line>
+      <line x1="1293.3600000000001" y1="455.5" x2="1311.3600000000001" y2="455.5" class="tick"></line>
+      <line x1="1211.58726545387" y1="601.3699999999999" x2="1227.17572272199" y2="610.3699999999999" class="tick"></line>
+      <line x1="988.18" y1="708.1542513000721" x2="997.18" y2="723.742708568192" class="tick"></line>
+      <line x1="683" y1="747.24" x2="683" y2="765.24" class="tick"></line>
+      <line x1="377.8200000000001" y1="708.1542513000721" x2="368.8200000000001" y2="723.742708568192" class="tick"></line>
+      <line x1="154.41273454613008" y1="601.3700000000001" x2="138.8242772780102" y2="610.3700000000001" class="tick"></line>
+      <line x1="72.63999999999999" y1="455.50000000000006" x2="54.639999999999986" y2="455.50000000000006" class="tick"></line>
+      <line x1="154.41273454613008" y1="309.63" x2="138.8242772780102" y2="300.63" class="tick"></line>
+      <line x1="377.8199999999997" y1="202.84574869992795" x2="368.8199999999997" y2="187.25729143180803" class="tick"></line>
+      <circle cx="683" cy="455.5" r="10" class="center-dot"></circle>
+      <line id="hand" x1="683" y1="455.5" x2="844.1315359518376" y2="172.16954584385587"></line>
+      <polygon id="handTip" fill="#dde2e4" points="844.1315359518376,172.16954584385587 846.1982907502444,203.87008764314794 811.5345953941352,194.1526690425701"></polygon>
+    </g>
+  </svg>
 
-    <!-- orologio sotto a tutto -->
-    <div id="clock" aria-hidden="true">
-      <div class="hand"></div><div class="hub"></div>
-    </div>
-
-    <!-- video centrale -->
-    <section id="viewport" aria-label="video introduttivo">
-      <video id="hero" autoplay muted playsinline webkit-playsinline preload="auto">
-        <source src="videos/video-hero.mp4" type="video/mp4">
-      </video>
-    </section>
-
-    <!-- 12 pulsanti creati da JS -->
-    <ul id="nodes" aria-label="tap per aprire contenuti"></ul>
+  <!-- Video viewport -->
+  <div id="viewport" class="viewport" role="region" aria-label="contenuti">
+    <video id="hero" autoplay muted playsinline webkit-playsinline preload="auto">
+      <source src="videos/video-hero.mp4" type="video/mp4">
+    </video>
   </div>
 
-  <script src="home.js"></script>
+  <!-- 12 pulsanti (creati da JS) -->
+  <div id="nodes-container"></div>
+
+  <script src="app.js"></script>
 </body>
 </html>
 
