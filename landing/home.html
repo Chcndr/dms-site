@@ -29,51 +29,20 @@
     overflow:hidden;
   }
 
-  /* BACKGROUND ITALIA ANIMATA */
-  .bg-italy-anim{ position:fixed; inset:0; z-index:0; pointer-events:none; }
-
-  /* gradient di sfondo con movimento molto lento */
-  .bg-italy-anim .bg-gradient{
-    position:absolute; inset:-10%;
+  /* Sfondo pulito + leggerissimo movimento */
+  .bg-base{
+    position:fixed; inset:0; z-index:0; pointer-events:none;
     background:
-      radial-gradient(120% 80% at 20% 10%, #0f3b44 0%, transparent 40%),
+      radial-gradient(120% 80% at 20% 10%, #0f3b44 0%, transparent 45%),
       radial-gradient(100% 100% at 85% 90%, #0a2c33 0%, transparent 55%),
       linear-gradient(180deg, #0a3a43, #0c2f35 60%, #0a2b31);
-    filter:contrast(1.02) saturate(1.04);
-    animation:pan 22s linear infinite;
-    opacity:.96;
+    animation: pan 22s linear infinite;
+    opacity:.98; filter:contrast(1.02) saturate(1.04);
   }
   @keyframes pan{
-    0%{transform:translate3d(0,0,0)}
-    50%{transform:translate3d(2%,-1.5%,0)}
-    100%{transform:translate3d(0,0,0)}
-  }
-
-  /* posizionamento Italia */
-  #italySVG{
-    position:absolute; right:3vw; bottom:-6vh;
-    width:min(1400px,95vw); height:auto;
-    opacity:.22;
-    filter:drop-shadow(0 0 10px rgba(92,242,255,.08));
-  }
-
-  /* stile per italy-clean.svg */
-  .bg-italy-anim svg{ color:var(--neon); }
-  .bg-italy-anim svg polyline,
-  .bg-italy-anim svg line{ fill:none; stroke:currentColor; stroke-width:1.4; stroke-linecap:round; stroke-linejoin:round; }
-
-  /* breathing leggero dopo il draw */
-  .bg-italy-anim.lit svg polyline{ animation:breath 6s ease-in-out infinite; }
-  @keyframes breath{ 0%,100%{opacity:.24;filter:blur(0)} 50%{opacity:.34;filter:blur(.2px)} }
-
-  /* spotlight che segue il mouse (mix-blend screen) */
-  .bg-italy-anim .spotlight{
-    position:absolute; inset:0;
-    background:
-      radial-gradient(320px 220px at var(--mx,50%) var(--my,50%), rgba(92,242,255,.14), transparent 60%),
-      radial-gradient(160px 120px at var(--mx,50%) var(--my,50%), rgba(255,255,255,.04), transparent 70%);
-    mix-blend-mode:screen;
-    opacity:0; transition:opacity .25s ease;
+    0%{transform:translate(0,0)} 
+    50%{transform:translate(2%,-1.5%)} 
+    100%{transform:translate(0,0)}
   }
 
   /* ===== Retro-illuminazione viewport (finestra video) ===== */
@@ -157,7 +126,7 @@
     stroke-width:3; stroke-linecap:round;
   }
 
-  /* ——— NEON SCOPED ALLA HOME ——— */
+  /* ——— NEON SCOPED ALLA HOME (rafforzato) ——— */
   .home-orologio .nodes-layer{ position:relative; z-index:20; }
 
   .home-orologio .node{
@@ -165,52 +134,38 @@
     position:fixed; width:var(--btnW); height:var(--btnW);
     border-radius:16px; z-index:2;
     border:1.5px solid rgba(255,255,255,.22);
-    background:rgba(6,32,38,.28); color:#e6ecee;
+    background:rgba(255,255,255,.04); color:#e6ecee;
     display:grid; place-items:center;
-    backdrop-filter:blur(4px);
-    isolation:isolate;              /* per i pseudo sotto */
-    transition: transform .15s ease;
-  }
-
-  /* Ombra sotto (scurisce il fondo) */
-  .home-orologio .node::after{
-    content:""; position:absolute; inset:auto 10% -14px 10%;
-    height:30px; border-radius:22px;
-    background:radial-gradient(60% 90% at 50% 20%, rgba(0,0,0,.38), transparent 70%);
-    filter:blur(10px); z-index:-1; pointer-events:none;
-  }
-
-  /* Glow neon (solo cosmetico) */
-  .home-orologio .node::before{
-    content:""; position:absolute; inset:-2px; border-radius:16px;
-    background:
-      radial-gradient(120% 120% at 50% 50%, rgba(92,242,255,.35), transparent 60%),
-      conic-gradient(from 0deg, #5cf2ff, #00d0ff, #5cf2ff, #00d0ff);
-    opacity:0; filter:blur(8px);
-    transition:opacity .18s ease, filter .18s ease, box-shadow .18s ease;
-    z-index:-1; pointer-events:none;
-  }
-
-  /* Stati interattivi: niente scale, solo luce + bordo */
-  .home-orologio .node:hover,
-  .home-orologio .node:focus-visible,
-  .home-orologio .node.is-active{
-    border-color:color-mix(in oklab, #5cf2ff 75%, white);
+    backdrop-filter:blur(3px);
+    isolation:isolate;
     box-shadow:
-      0 0 0 1px rgba(255,255,255,.08) inset,
-      0 0 14px rgba(92,242,255,.25),
-      0 8px 24px rgba(0,0,0,.35);
+      0 10px 24px rgba(0,0,0,.25),
+      0 0 0 1px rgba(255,255,255,.08) inset;
+    transition: box-shadow .2s, transform .2s, background .2s;
   }
-  .home-orologio .node:hover::before,
-  .home-orologio .node:focus-visible::before,
-  .home-orologio .node.is-active::before{ opacity:.9; filter:blur(10px); }
+
+  .home-orologio .node:hover{
+    transform: translateY(-2px);
+    background: rgba(0, 208, 255, .08);
+    box-shadow:
+      0 18px 48px rgba(0,0,0,.35),
+      0 0 18px rgba(92,242,255,.35),
+      0 0 0 1px rgba(92,242,255,.30) inset;
+  }
+
+  .home-orologio .node.is-active{
+    background: rgba(0, 208, 255, .12);
+    box-shadow:
+      0 20px 54px rgba(0,0,0,.4),
+      0 0 24px rgba(92,242,255,.45),
+      0 0 0 1px rgba(92,242,255,.34) inset;
+  }
 
   /* Accessibilità focus senza spostare il layout */
   .home-orologio .node:focus-visible{
     outline:2px solid #8af7ff; outline-offset:3px;
   }
 
-  .home-orologio .node:hover{ transform: translateY(-2px) }
   .home-orologio .node .tag{ opacity:.9; font-weight:700; }
 
   .viewport{
@@ -237,21 +192,14 @@
   }
 
   @media (prefers-reduced-motion: reduce){
-    .home-orologio .node, .home-orologio .node::before{ transition:none !important; }
-    .bg-italy-anim .bg-gradient{ animation:none; }
-    .bg-italy-anim.lit svg polyline{ animation:none; }
-    .bg-italy-anim .spotlight{ display:none; }
+    .home-orologio .node{ transition:none !important; }
+    .bg-base{ animation:none; }
   }
 </style>
 </head>
 <body class="home-orologio">
 
-  <!-- BACKGROUND ITALIA ANIMATA -->
-  <div class="bg-italy-anim" aria-hidden="true">
-    <div class="bg-gradient"></div>
-    <object id="italySVG" type="image/svg+xml" data="./assets/italy-clean.svg?v=clean1"></object>
-    <div class="spotlight"></div>
-  </div>
+  <div class="bg-base" aria-hidden="true"></div>
 
   <div class="toolbar">
     <a class="btn" href="./index.html">🎬 Spot</a>
@@ -434,44 +382,7 @@ ns.forEach(n=>{ if(n.getAttribute('aria-disabled')==='true') return;
 });})();
 </script>
 
-<script>
-(function(){
-  const wrapper = document.querySelector('.bg-italy-anim');
-  const obj = document.getElementById('italySVG');
-  const spot = wrapper.querySelector('.spotlight');
 
-  function draw(doc){
-    const segs = doc.querySelectorAll('polyline, line');
-    segs.forEach((el,i)=>{
-      const L = (typeof el.getTotalLength === 'function') ? el.getTotalLength() : 600;
-      el.style.strokeDasharray=L;
-      el.style.strokeDashoffset=L;
-      el.style.transition=`stroke-dashoffset 1100ms ease ${i*60}ms`;
-    });
-    requestAnimationFrame(()=> segs.forEach(el=> el.style.strokeDashoffset=0));
-    setTimeout(()=> wrapper.classList.add('lit'), 1400);
-  }
-
-  obj.addEventListener('load', ()=> draw(obj.contentDocument));
-  if (obj.contentDocument) draw(obj.contentDocument);
-
-  // spotlight (desktop)
-  let raf;
-  function move(e){
-    const x=e.clientX||(e.touches&&e.touches[0].clientX);
-    const y=e.clientY||(e.touches&&e.touches[0].clientY);
-    if(!x&& !y) return;
-    if(!raf){
-      raf=requestAnimationFrame(()=>{ wrapper.style.setProperty('--mx',x+'px'); wrapper.style.setProperty('--my',y+'px'); raf=null;});
-    }
-    spot.style.opacity=.9;
-  }
-  function leave(){ spot.style.opacity=0; }
-  window.addEventListener('mousemove', move, {passive:true});
-  window.addEventListener('mouseleave', leave, {passive:true});
-  window.addEventListener('touchstart', ()=>{ spot.style.display='none'; }, {once:true, passive:true});
-})();
-</script>
 
 
 </body>
