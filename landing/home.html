@@ -101,65 +101,61 @@
     stroke-width:3; stroke-linecap:round;
   }
 
-  /* wrapper layer dei pulsanti già sopra all'orologio */
-  .nodes-layer{ position:relative; z-index:20; }
+  /* ——— NEON SCOPED ALLA HOME ——— */
+  .home-orologio .nodes-layer{ position:relative; z-index:20; }
 
-  /* pulsante (quadrato) neon */
-  .node{
-    position:relative; display:grid; place-items:center;
-    width:clamp(96px, 9vw, 150px); aspect-ratio:1/1;
-    border-radius:16px; border:1.5px solid var(--node-br);
-    background:var(--node-bg); color:var(--ink);
+  .home-orologio .node{
+    /* NON modifichiamo width/height/posizione: restano quelli esistenti */
+    position:fixed; width:var(--btnW); height:var(--btnW);
+    border-radius:16px; z-index:2;
+    border:1.5px solid rgba(255,255,255,.22);
+    background:rgba(6,32,38,.28); color:#e6ecee;
+    display:grid; place-items:center;
     backdrop-filter:blur(4px);
-    transition:transform .18s ease, box-shadow .18s ease, border-color .18s ease;
-    isolation:isolate; /* stacking locale per i pseudo-elementi */
+    isolation:isolate;              /* per i pseudo sotto */
+    transition: transform .15s ease;
   }
 
   /* Ombra sotto (scurisce il fondo) */
-  .node::after{
-    content:""; position:absolute; inset:auto 8% -12px 8%;
-    height:28px; border-radius:20px;
-    background:radial-gradient(60% 80% at 50% 20%, rgba(0,0,0,.38), transparent 70%);
+  .home-orologio .node::after{
+    content:""; position:absolute; inset:auto 10% -14px 10%;
+    height:30px; border-radius:22px;
+    background:radial-gradient(60% 90% at 50% 20%, rgba(0,0,0,.38), transparent 70%);
     filter:blur(10px); z-index:-1; pointer-events:none;
   }
 
-  /* Glow neon (sotto al bordo) */
-  .node::before{
-    content:""; position:absolute; inset:-2px;
-    border-radius:16px; z-index:-1; pointer-events:none;
+  /* Glow neon (solo cosmetico) */
+  .home-orologio .node::before{
+    content:""; position:absolute; inset:-2px; border-radius:16px;
     background:
       radial-gradient(120% 120% at 50% 50%, rgba(92,242,255,.35), transparent 60%),
-      conic-gradient(from 0deg, var(--neon), var(--neon-2), var(--neon), var(--neon-2));
-    opacity:.0; filter:blur(8px);
-    transition:opacity .18s ease, filter .18s ease;
+      conic-gradient(from 0deg, #5cf2ff, #00d0ff, #5cf2ff, #00d0ff);
+    opacity:0; filter:blur(8px);
+    transition:opacity .18s ease, filter .18s ease, box-shadow .18s ease;
+    z-index:-1; pointer-events:none;
   }
 
-  /* Stato hover/focus/attivo: illumina + bordo neon */
-  .node:hover,
-  .node:focus-visible,
-  .node.is-active{
-    border-color:color-mix(in oklab, var(--neon) 75%, white);
+  /* Stati interattivi: niente scale, solo luce + bordo */
+  .home-orologio .node:hover,
+  .home-orologio .node:focus-visible,
+  .home-orologio .node.is-active{
+    border-color:color-mix(in oklab, #5cf2ff 75%, white);
     box-shadow:
       0 0 0 1px rgba(255,255,255,.08) inset,
       0 0 14px rgba(92,242,255,.25),
       0 8px 24px rgba(0,0,0,.35);
   }
-  .node:hover::before,
-  .node:focus-visible::before,
-  .node.is-active::before{ opacity:.9; filter:blur(10px); }
+  .home-orologio .node:hover::before,
+  .home-orologio .node:focus-visible::before,
+  .home-orologio .node.is-active::before{ opacity:.9; filter:blur(10px); }
 
-  /* "flicker" leggerissimo per effetto neon (solo su attivi) */
-  @keyframes neon-flicker{ 0%, 100%{opacity:.92} 45%{opacity:.84} 55%{opacity:.96} }
-  .node.is-active::before{ animation:neon-flicker 2.8s ease-in-out infinite; }
-
-  /* accessibilità: outline visibile con glow */
-  .node:focus-visible{
-    outline:2px solid var(--neon-hot); outline-offset:3px;
+  /* Accessibilità focus senza spostare il layout */
+  .home-orologio .node:focus-visible{
+    outline:2px solid #8af7ff; outline-offset:3px;
   }
 
-  /* disabilitati */
-  .node[aria-disabled="true"]{ opacity:.55; filter:saturate(.6); cursor:default; }
-  .node[aria-disabled="true"]:hover{ transform:none; box-shadow:none; }
+  .home-orologio .node:hover{ transform: translateY(-2px) }
+  .home-orologio .node .tag{ opacity:.9; font-weight:700; }
 
   .viewport{
     position:fixed; z-index:3;
@@ -185,12 +181,11 @@
   }
 
   @media (prefers-reduced-motion: reduce){
-    .node, .node::before{ transition:none !important; }
-    .node.is-active::before{ animation:none !important; }
+    .home-orologio .node, .home-orologio .node::before{ transition:none !important; }
   }
 </style>
 </head>
-<body>
+<body class="home-orologio">
 
   <!-- Italia statica sotto a tutto -->
   <div class="bg-italy" aria-hidden="true"></div>
@@ -370,17 +365,10 @@
 </script>
 
 <script>
-(() => {
-  const nodes = [...document.querySelectorAll('.nodes-layer .node')];
-  function setActive(el){
-    nodes.forEach(n => n.classList.toggle('is-active', n===el));
-  }
-  nodes.forEach(n => {
-    if(n.getAttribute('aria-disabled') === 'true') return;
-    n.addEventListener('click', () => setActive(n));
-    n.addEventListener('keydown', (e)=>{ if(e.key==='Enter' || e.key===' ') { e.preventDefault(); setActive(n);} });
-  });
-})();
+(()=>{const ns=[...document.querySelectorAll('.home-orologio .nodes-layer .node')];
+ns.forEach(n=>{ if(n.getAttribute('aria-disabled')==='true') return;
+  n.addEventListener('click',()=>ns.forEach(m=>m.classList.toggle('is-active',m===n)));
+});})();
 </script>
 
 
