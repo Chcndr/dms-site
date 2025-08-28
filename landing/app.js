@@ -40,7 +40,7 @@ function animateHand() {
   let angle = 0;
   const centerX = 683;
   const centerY = 455.5;
-  const radius = 200;
+  const radius = 400; // Lancetta più lunga per raggiungere pulsanti lontani
   
   function updateHand() {
     const radians = (angle * Math.PI) / 180;
@@ -51,10 +51,10 @@ function animateHand() {
     hand.setAttribute('y2', y);
     
     // Update hand tip
-    const tipPoints = `${x},${y} ${x+2.07},${y+31.7} ${x-34.6},${y+21.98}`;
+    const tipPoints = `${x},${y} ${x+5},${y+10} ${x-5},${y+10}`;
     handTip.setAttribute('points', tipPoints);
     
-    angle = (angle + 0.5) % 360; // 12 secondi per giro completo (360/0.5 = 720 frames = 12s a 60fps)
+    angle = (angle + 0.5) % 360; // 12 secondi per giro completo
   }
   
   setInterval(updateHand, 16.67); // ~60fps
@@ -73,20 +73,20 @@ function buildNodes() {
     {label: '· presto'}, {label: '· presto'}, {label: '· presto'}, {label: '· presto'}
   ];
   
-  // Posizioni esatte dal SingleFile originale (ellisse stretta attorno al video)
+  // Posizioni ellisse larga (come IMG_7043 corretta)
   const positions = [
-    {left: 673, top: 125},    // 12 o'clock
-    {left: 928, top: 162},    // 1 o'clock  
-    {left: 1151, top: 269},   // 2 o'clock
-    {left: 1233, top: 415},   // 3 o'clock
-    {left: 1151, top: 561},   // 4 o'clock
-    {left: 928, top: 668},    // 5 o'clock
-    {left: 673, top: 705},    // 6 o'clock
-    {left: 418, top: 668},    // 7 o'clock
-    {left: 195, top: 561},    // 8 o'clock
-    {left: 113, top: 415},    // 9 o'clock
-    {left: 195, top: 269},    // 10 o'clock
-    {left: 418, top: 162}     // 11 o'clock
+    {left: 613, top: 55},     // 12 o'clock - più lontano
+    {left: 1020, top: 110},   // 1 o'clock - più lontano
+    {left: 1320, top: 240},   // 2 o'clock - più lontano  
+    {left: 1420, top: 415},   // 3 o'clock - più lontano
+    {left: 1320, top: 590},   // 4 o'clock - più lontano
+    {left: 1020, top: 720},   // 5 o'clock - più lontano
+    {left: 613, top: 775},    // 6 o'clock - più lontano
+    {left: 206, top: 720},    // 7 o'clock - più lontano
+    {left: -94, top: 590},    // 8 o'clock - più lontano
+    {left: -194, top: 415},   // 9 o'clock - più lontano
+    {left: -94, top: 240},    // 10 o'clock - più lontano
+    {left: 206, top: 110}     // 11 o'clock - più lontano
   ];
   
   items.forEach((item, i) => {
