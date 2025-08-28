@@ -7,28 +7,24 @@
   <link rel="stylesheet" href="app.css" />
 </head>
 <body>
-  <div class="wrap">
+  <div class="wrap"><!-- WRAPPER ESISTENTE: NON CAMBIARE -->
     <nav class="badge-bar">
+      <a class="chip" href="#pdf1">PDF</a>
       <a class="chip" href="./index.html">🎬 Spot</a>
       <a class="chip" href="./mindmap.html">🧠 Mappa</a>
+      <a class="chip" href="#pdf2">PDF</a>
     </nav>
 
     <h1 class="page-title">GEMELLO DIGITALE DEL COMMERCIO — DMS • Orologio roadmap</h1>
 
-    <!-- HERO: deve stare DENTRO lo stesso wrapper -->
+    <!-- HERO: DEVE STARE DENTRO LO STESSO WRAPPER -->
     <section class="hero">
       <div class="media-16x9">
-        <video src="videos/video-hero.mp4" autoplay muted loop playsinline></video>
+        <!-- poster = prima immagine se autoplay non parte -->
+        <video src="videos/video-hero.mp4"
+               preload="metadata" autoplay muted loop playsinline webkit-playsinline></video>
       </div>
     </section>
-
-    <!-- 12 pulsanti PDF in ellisse -->
-    <div class="nodes-container">
-      <div class="nodes"></div>
-    </div>
-
-    <!-- Lancetta -->
-    <div class="clock-hand"></div>
   </div>
 
   <script src="app.js"></script>
