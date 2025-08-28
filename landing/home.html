@@ -23,51 +23,13 @@
     overflow:hidden;
   }
 
-  /* disattiva PNG statico (se presente) */
-  body::before{ display:none !important; }
-
-  /* Layer animazione Italia */
-  .bg-italy-anim{
+  /* Sfondo Italia statico */
+  .bg-italy{
     position:fixed; inset:0; z-index:0; pointer-events:none;
-    opacity:.26; filter: drop-shadow(0 8px 18px rgba(0,0,0,.35));
-  }
-
-  /* Contorno (si disegna) */
-  .it-outline{
-    fill:none; stroke:#bfe9ff; stroke-width:2.4;
-    stroke-linecap:round; stroke-linejoin:round;
-    filter: drop-shadow(0 0 8px rgba(140,220,255,.6));
-    stroke-dasharray:1800; stroke-dashoffset:1800;
-    animation: it-draw 3.0s ease-out forwards .2s, it-glow 4s ease-in-out infinite 3.2s;
-  }
-
-  /* Nodi (pallini) che si accendono */
-  .it-node{
-    fill:#d6f5ff; opacity:0;
-    filter: drop-shadow(0 0 10px rgba(150,230,255,.9));
-    transform-origin:center;
-    animation: it-pop .6s ease-out forwards var(--delay, 0s);
-  }
-
-  /* Collegamenti tra nodi */
-  .it-link{
-    stroke:#a8e7ff; stroke-width:1.8; opacity:0;
-    filter: drop-shadow(0 0 6px rgba(140,220,255,.7));
-    stroke-dasharray:180; stroke-dashoffset:180;
-    animation: it-link 1.2s ease-out forwards var(--delay, 0s);
-  }
-
-  /* Keyframes */
-  @keyframes it-draw{ to{ stroke-dashoffset:0 } }
-  @keyframes it-glow{ 0%,100%{ filter:drop-shadow(0 0 6px rgba(140,220,255,.5)) } 50%{ filter:drop-shadow(0 0 14px rgba(140,220,255,.9)) } }
-  @keyframes it-pop{ 0%{opacity:0; transform:scale(.4)} 70%{opacity:1; transform:scale(1.2)} 100%{opacity:1; transform:scale(1)} }
-  @keyframes it-link{ 0%{opacity:0; stroke-dashoffset:180} 40%{opacity:1} 100%{opacity:1; stroke-dashoffset:0} }
-
-  /* Accessibilità: se l'utente preferisce meno animazioni, mostriamo tutto statico */
-  @media (prefers-reduced-motion: reduce){
-    .it-outline{ animation:none; stroke-dashoffset:0 }
-    .it-node{ animation:none; opacity:1 }
-    .it-link{ animation:none; opacity:1; stroke-dashoffset:0 }
+    opacity:.24; filter:drop-shadow(0 8px 18px rgba(0,0,0,.35));
+    background:
+      radial-gradient(1200px 800px at 60% 20%, rgba(255,255,255,.05), transparent 60%),
+      url("./assets/italy-gemello.png?v=9") no-repeat center 58%/min(1020px, 88vmin);
   }
 
   /* garantisci layer */
@@ -139,8 +101,8 @@
 </head>
 <body>
 
-  <!-- Italia animata sotto a tutto -->
-  <svg id="bgItaly" class="bg-italy-anim" viewBox="0 0 800 1100" aria-hidden="true"></svg>
+  <!-- Italia statica sotto a tutto -->
+  <div class="bg-italy" aria-hidden="true"></div>
 
   <div class="toolbar">
     <a class="btn" href="./index.html">🎬 Spot</a>
@@ -316,73 +278,7 @@
   addEventListener('pageshow', ensureHero);
 </script>
 
-<script>
-/**
- * Italia animata (outline → nodi → collegamenti)
- * Canvas 800x1100 (responsive via viewBox)
- */
-(function(){
-  const svg = document.getElementById('bgItaly');
-  if(!svg) return;
 
-  // --- Outline stilizzato (mainland + Sicilia + Sardegna) ---
-  // Path "a mano" stilizzato: non geografico al millimetro, ma riconoscibile.
-  // Se preferisci un profilo più preciso, sostituisci i "d" con path esportati da un SVG cartografico.
-  const outline = [
-    // Penisola (profilo semplificato "a stivale")
-    "M400 100 C 360 120, 330 170, 320 220 C 315 260, 330 300, 350 330 C 290 370, 270 420, 285 470 C 300 515, 340 530, 370 560 C 330 590, 320 640, 330 690 C 340 740, 380 770, 415 785 C 400 820, 395 860, 410 900 C 430 945, 470 960, 505 965 C 535 970, 565 965, 580 950 C 595 935, 595 915, 580 900 C 565 885, 545 885, 525 892 C 510 897, 500 900, 490 890 C 480 880, 490 860, 500 845 C 520 815, 555 790, 580 765 C 610 735, 625 695, 620 655 C 615 615, 590 585, 560 565 C 585 545, 610 515, 620 485 C 635 435, 620 380, 585 350 C 610 310, 620 260, 600 220 C 585 190, 550 165, 515 155 C 480 145, 440 150, 400 100 Z",
-    // Sicilia
-    "M480 980 C 450 965, 405 960, 365 968 C 340 973, 320 990, 325 1008 C 330 1028, 355 1038, 380 1034 C 435 1026, 500 1028, 525 1015 C 542 1006, 545 990, 535 986 C 520 979, 505 985, 480 980 Z",
-    // Sardegna
-    "M180 820 C 160 790, 150 750, 160 715 C 170 680, 195 660, 220 658 C 245 656, 265 672, 275 698 C 288 730, 285 770, 270 800 C 255 830, 225 850, 205 845 C 190 840, 188 835, 180 820 Z"
-  ];
-
-  // --- Nodi (posizioni approssimative: Nord, Centro, Sud, isole) ---
-  const nodes = [
-    {x:420,y:190},{x:350,y:340},{x:560,y:330},{x:300,y:480},{x:560,y:560},
-    {x:410,y:610},{x:520,y:740},{x:470,y:890},{x:380,y:1030},{x:210,y:740},{x:250,y:680},{x:580,y:470}
-  ];
-
-  // --- Collegamenti (indici dentro "nodes") ---
-  const links = [
-    [0,1],[0,2],[1,3],[2,4],[3,5],[4,6],[6,7],[7,8],[5,7],[9,10],[3,11],[11,4]
-  ];
-
-  // pulisci e disegna
-  svg.innerHTML = '';
-
-  // Disegna outline
-  outline.forEach(d=>{
-    const p = document.createElementNS('http://www.w3.org/2000/svg','path');
-    p.setAttribute('d', d);
-    p.setAttribute('class','it-outline');
-    svg.appendChild(p);
-  });
-
-  // Disegna nodi (con ritardi progressivi)
-  nodes.forEach((n,i)=>{
-    const c = document.createElementNS('http://www.w3.org/2000/svg','circle');
-    c.setAttribute('cx', n.x); c.setAttribute('cy', n.y); c.setAttribute('r', 4.5);
-    c.setAttribute('class','it-node');
-    c.style.setProperty('--delay', (0.4 + i*0.08)+'s');
-    svg.appendChild(c);
-  });
-
-  // Disegna collegamenti dopo i nodi
-  links.forEach((pair,i)=>{
-    const a = nodes[pair[0]], b = nodes[pair[1]];
-    const l = document.createElementNS('http://www.w3.org/2000/svg','line');
-    l.setAttribute('x1', a.x); l.setAttribute('y1', a.y);
-    l.setAttribute('x2', b.x); l.setAttribute('y2', b.y);
-    l.setAttribute('class','it-link');
-    l.style.setProperty('--delay', (0.8 + i*0.10)+'s');
-    svg.appendChild(l);
-  });
-
-  // Resize responsivo (il viewBox fa già il lavoro, qui solo debounce se servisse)
-  addEventListener('resize', ()=>{/* no-op: viewBox responsive */});
-})();
-</script>
 </body>
 </html>
 
