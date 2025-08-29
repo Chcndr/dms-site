@@ -1,178 +1,119 @@
 <!doctype html>
 <html lang="it">
 <head>
-  <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width,initial-scale=1"/>
-  <title>DMS – Hub Nazionale del Commercio</title>
-  <link rel="stylesheet" href="assets/style.css"/>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>DMS — Hub di Prossimità</title>
+<style>
+:root{--bg:#071a1d;--ink:#e8fbff;--muted:#9bd6de;--panel:rgba(7,26,29,.7);--stroke:rgba(173,234,240,.18);--accent:#14b8a6;--accent2:#0b5fff}
+*{box-sizing:border-box} html,body{height:100%} body{margin:0;color:var(--ink);font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;background:
+radial-gradient(1200px 700px at 20% -10%,rgba(20,184,166,.10),transparent 60%),
+radial-gradient(900px 800px at 120% 10%,rgba(11,95,255,.12),transparent 60%),var(--bg)}
+.container{max-width:1200px;margin:0 auto;padding:26px 18px 80px}
+.header{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.brand{display:flex;align-items:center;gap:12px}
+.brand .logo{width:20px;height:20px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2))}
+.brand h1{margin:0;font-size:22px;letter-spacing:.2px}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:10px 14px;border-radius:12px;color:var(--ink);text-decoration:none;font-weight:600;background:linear-gradient(180deg,#0b2730,#092029);border:1px solid var(--stroke)}
+.sub{color:var(--muted);margin:6px 0 14px}
+.card{background:var(--panel);border:1px solid var(--stroke);border-radius:16px;padding:16px;backdrop-filter:blur(6px)}
+.grid{display:grid;gap:16px;grid-template-columns:1fr} @media(min-width:960px){.grid{grid-template-columns:1.2fr .8fr}}
+.list a{display:flex;gap:8px;padding:10px;border-radius:10px;text-decoration:none;color:#cfe0ff;border:1px solid #27324a;margin-bottom:8px}
+.video{width:100%;aspect-ratio:16/9;background:#000;border-radius:10px;border:1px solid #27324a}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.75);display:none;align-items:center;justify-content:center;padding:18px}
+.modal.show{display:flex} .modal .box{background:#061317;border:1px solid var(--stroke);border-radius:16px;max-width:920px;width:100%}
+.modal video{width:100%;height:auto;border-radius:16px}
+.modal .actions{display:flex;gap:8px;justify-content:flex-end;padding:10px}
+.a{background:#0b2730;border:1px solid #2d6a73;color:var(--ink);padding:8px 12px;border-radius:10px;text-decoration:none}
+</style>
 </head>
 <body>
-  <div class="container">
-    <div class="hero card">
-      <div>
-        <h1>DMS – Hub Nazionale del Commercio</h1>
-        <p>Minisito pronto per pubblicazione (GitHub Pages). Include link al cruscotto e materiali.</p>
-      </div>
-      <div>
-        <a href="https://chcndr.github.io/dms-site/" target="_blank" id="openDash" class="btn">Apri Cruscotto DMS</a>
-        <a href="contabilita.html" class="btn">Contabilità DMS</a>
-        <a href="?admin=true" class="btn alt">Admin</a>
-      </div>
+<div class="container">
+  <div class="header">
+    <div class="brand"><div class="logo"></div><h1>DMS — Hub di Prossimità</h1></div>
+    <div>
+      <a class="btn" href="#" onclick="openModal();return false;">🎬 Spot</a>
+      <a class="btn" href="./mindmap.html">🧠 Mappa</a>
     </div>
-
-    <div class="grid">
-      <section class="card">
-        <h3 class="section-title">Anteprima <span class="badge">Video</span></h3>
-        <div class="video-box" id="previewBox">
-          <small class="muted">Aggiungi un file in <code>/site/assets/preview.jpg</code> oppure un video in <code>/site/videos/</code></small>
-        </div>
-        <div class="hr"></div>
-        <p><small class="muted">Suggerimento: per file .MOV pesanti, usa n8n presigned URL o host esterno.</small></p>
-      </section>
-
-      <section class="card">
-        <h3 class="section-title">Documenti <span class="badge">PDF</span></h3>
-        <ul class="list" id="pdfList">
-          <!-- Link diretti ai PDF su GitHub Pages -->
-          <li><a href="https://chcndr.github.io/dms-site/docs/DMS_E_CLUST-ER.pdf" target="_blank">📄 DMS e CLUST-ER (PDF)</a></li>
-          <li><a href="https://chcndr.github.io/dms-site/docs/PRESENTAZIONE_DMS.pdf" target="_blank">📄 Presentazione DMS (PDF)</a></li>
-        </ul>
-      </section>
-
-      <section class="card">
-        <h3 class="section-title">Video <span class="badge">Media</span></h3>
-        <div class="video-content">
-          <video class="video" id="vid1" controls muted playsinline>
-            <source src="./videos/teaser-hub-dms.mp4" type="video/mp4">
-          </video>
-
-          <div style="height:12px"></div>
-          <video class="video" id="vid2" controls muted playsinline>
-            <source src="./videos/teaser-riaccendiamo.mp4" type="video/mp4">
-          </video>
-
-          <div style="height:12px"></div>
-          <video class="video" id="vid3" controls muted playsinline>
-            <source src="./videos/teaser-altro.mp4" type="video/mp4">
-          </video>
-        </div>
-      </section>
-    </div>
-
-    <section id="admin" class="card" style="margin-top:18px; display:none">
-      <h3>Admin</h3>
-      <p><small class="muted">Sezione visibile quando l'URL contiene <code>?admin=true</code>. Prevede collegamento a n8n per presigned upload e registrazione contenuti.</small></p>
-      
-      <!-- Sezione Contabilità DMS -->
-      <div class="card" style="margin: 16px 0; padding: 16px; border: 1px solid #e6e6e6; border-radius: 8px;">
-        <h4>Contabilità DMS</h4>
-        <p>Gestisci contabilità, fatture, scadenze e report direttamente dal tuo cruscotto DMS.</p>
-        <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-top: 12px;">
-          <a class="btn" href="https://dms-ai.app.n8n.cloud/webhook/contabilita/onboard?plan=trial30&src=admin">Attiva prova 30 giorni</a>
-          <a class="btn alt" href="https://contabilita.dominio.provvisorio/?from=admin">Apri Dashboard</a>
-        </div>
-        <p style="margin-top: 8px; color: #777; font-size: 12px;">Accesso riservato agli utenti registrati. Per assistenza contattaci.</p>
-      </div>
-      
-      <ul class="list">
-        <li>Upload via n8n (presigned URL + register)</li>
-        <li>Upload diretto su GitHub (Contents API, PAT)</li>
-        <li>Aggiornamento <code>content/manifest.json</code></li>
-      </ul>
-    </section>
-
-    <p class="footer">© 2025 DMS – Digital Market System</p>
   </div>
+  <p class="sub">Gemello digitale, pagamenti, Once-Only, ECC. Guarda lo spot, poi apri la mappa neurale.</p>
 
-  <script>
-    const params = new URLSearchParams(location.search);
-    const isAdmin = params.get('admin') === 'true';
-    if (isAdmin) document.getElementById('admin').style.display = 'block';
-
-    const DASH_URL = params.get('dash') || '#'; // sostituito da Manus con URL reale
-    document.getElementById('openDash').setAttribute('href', DASH_URL);
-
-    fetch('content/manifest.json')
-      .then(r => r.json())
-      .then(data => {{ render(data); }})
-      .catch(() => {{ render({{pdfs:[],videos:[]}}); }});
-
-    function render(data){{
-      const pdfList = document.getElementById('pdfList');
-      const videoList = document.getElementById('videoList');
-      const makeItem = (t,u)=>`<li><a class="btn alt" href="${u}" download>${t}</a></li>`;
-
-      if(data.pdfs?.length){{
-        pdfList.innerHTML = data.pdfs.map(x=>makeItem(x.title||x.file, x.url||( 'docs/' + x.file ))).join('');
-      }} else {{
-        pdfList.innerHTML = '<li><small class="muted">Nessun PDF registrato.</small></li>';
-      }}
-
-      if(data.videos?.length){{
-        videoList.innerHTML = data.videos.map(x=>makeItem(x.title||x.file, x.url||( 'videos/' + x.file ))).join('');
-      }} else {{
-        videoList.innerHTML = '<li><small class="muted">Nessun video registrato.</small></li>';
-      }}
-    }}
-  </script>
-
-  <!-- Modal Spot che si apre all'ingresso -->
-  <div id="spotModal" style="position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.8);z-index:1000;display:flex;align-items:center;justify-content:center;">
-    <div style="background:white;padding:20px;border-radius:8px;max-width:600px;width:90%;">
-      <h3>🎬 Spot DMS</h3>
-      <video id="spotVideo" controls muted autoplay playsinline webkit-playsinline style="width:100%;max-height:400px;">
-        <source src="./videos/video-hero.mp4" type="video/mp4">
+  <div class="grid">
+    <div class="card">
+      <h3>Documenti (PDF)</h3>
+      <div class="list">
+        <a href="./docs/dms-riaccendiamo.pdf">📄 DMS – Riaccendiamo i Mercati</a>
+        <a href="./docs/hub-nazionale.pdf">📄 Hub Nazionale del Commercio</a>
+        <a href="./docs/dossier-nazionale.pdf">📄 Dossier Nazionale</a>
+        <a href="./docs/dms-e-cluster.pdf">📄 DMS & CLUST-ER</a>
+        <a href="./docs/dms-ecc.pdf">📄 DMS ECC (narrativo)</a>
+        <a href="./docs/dms-ecc-2.pdf">📄 DMS ECC 2 (tecnico)</a>
+        <a href="./docs/logica-carbon-credit.pdf">📄 Carbon Credit – Logica</a>
+        <a href="./docs/equilibrio-ecosostenibile.pdf">📄 Equilibrio Ecosostenibile</a>
+        <a href="./docs/passaporto-eu.pdf">📄 Passaporto EU</a>
+        <a href="./docs/dpp-explained.pdf">📄 DPP Explained</a>
+        <a href="./docs/scenario-futuro.pdf">📄 Scenario Futuro</a>
+        <a href="./docs/gemello-dms.pdf">📄 Gemello DMS</a>
+        <a href="./docs/ecosistema-costi-pa.pdf">📄 Ecosistema Costi PA</a>
+        <a href="./docs/analisi-soluzione-dms.pdf">📄 Analisi & Soluzione</a>
+      </div>
+    </div>
+    <div class="card">
+      <h3>Video</h3>
+      <!-- Video 1 -->
+      <video class="video" id="vid1" controls muted playsinline preload="metadata">
         <source src="./videos/teaser-hub-dms.mp4" type="video/mp4">
       </video>
-      <div style="margin-top:15px;text-align:right;">
-        <button onclick="closeSpotModal()" style="padding:8px 16px;background:#007cba;color:white;border:none;border-radius:4px;cursor:pointer;">Chiudi</button>
-      </div>
+      <div style="height:12px"></div>
+      <!-- Video 2 -->
+      <video class="video" id="vid2" controls muted playsinline preload="metadata">
+        <source src="./videos/teaser-riaccendiamo.mp4" type="video/mp4">
+      </video>
+      <div style="height:12px"></div>
+      <!-- Video 3 -->
+      <video class="video" id="vid3" controls muted playsinline preload="metadata">
+        <source src="./videos/video-hero.mp4" type="video/mp4">
+      </video>
     </div>
   </div>
+</div>
 
-  <script>
-    const modal = document.getElementById('spotModal');
-    const spot = document.getElementById('spotVideo');
+<!-- Modal iniziale -->
+<div class="modal" id="modal" aria-hidden="true">
+  <div class="box">
+    <video id="spot" autoplay muted playsinline webkit-playsinline controls preload="auto">
+      <!-- slot principale -->
+      <source src="./videos/video-hero.mp4" type="video/mp4">
+      <!-- fallback -->
+      <source src="./videos/teaser-hub-dms.mp4" type="video/mp4">
+    </video>
+    <div class="actions">
+      <a class="a" href="#" onclick="closeModal();return false;">Chiudi</a>
+    </div>
+  </div>
+</div>
 
-    function tryPlay(){
-      if (!spot) return;
-      spot.muted = true; spot.autoplay = true;
-      spot.playsInline = true; spot.setAttribute('playsinline',''); spot.setAttribute('webkit-playsinline','');
-      const play = () => spot.play().catch(()=> setTimeout(play,300));
-      if (spot.readyState >= 2) play(); else spot.addEventListener('loadeddata', play, {once:true});
-      spot.addEventListener('error', ()=>{ spot.src = './videos/teaser-hub-dms.mp4'; tryPlay(); }, {once:true});
-    }
-    
-    function closeSpotModal() {
-      if (spot) { spot.pause(); spot.currentTime = 0; }
-      modal.style.display = 'none';
-    }
-    
-    // Chiudi modal con ESC o click fuori
-    document.addEventListener('keydown', function(e) {
-      if (e.key === 'Escape') closeSpotModal();
-    });
-    modal.addEventListener('click', function(e) {
-      if (e.target === modal) closeSpotModal();
-    });
-    
-    // Apri modal all'ingresso
-    window.addEventListener('load', () => setTimeout(() => {
-      modal.style.display = 'flex';
-      tryPlay();
-    }, 120));
-  </script>
+<script>
+const modal = document.getElementById('modal');
+const spot  = document.getElementById('spot');
 
-  <script>
-    (() => {
-      const p = new URL(location).searchParams;
-      const base = p.get('base') || localStorage.getItem('base') || 'https://dms-ai.app.n8n.cloud';
-      const token = p.get('token') || localStorage.getItem('token') || '';
-      localStorage.setItem('base', base);
-      if (token) localStorage.setItem('token', token);
-      const $b = document.getElementById('base'); if ($b) $b.value = base;
-      const $t = document.getElementById('token'); if ($t && token) $t.value = token;
-    })();
-  </script>
+function tryPlay(){
+  if (!spot) return;
+  spot.muted = true;
+  spot.autoplay = true;
+  spot.playsInline = true;
+  spot.setAttribute('playsinline','');
+  spot.setAttribute('webkit-playsinline','');
+  const play = ()=> spot.play().catch(()=> setTimeout(play,300));
+  if (spot.readyState >= 2) play();
+  else spot.addEventListener('loadeddata', play, {once:true});
+}
+
+function openModal(){ modal.classList.add('show'); tryPlay(); }
+function closeModal(){ if (spot){ spot.pause(); spot.currentTime = 0; } modal.classList.remove('show'); }
+
+modal.addEventListener('click', e=>{ if (e.target === modal) closeModal(); });
+document.addEventListener('keydown', e=>{ if (e.key === 'Escape') closeModal(); });
+window.addEventListener('load', ()=> setTimeout(openModal,120));
+</script>
 </body>
 </html>
