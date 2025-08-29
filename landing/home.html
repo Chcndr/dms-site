@@ -40,6 +40,9 @@
   --neon-soft: rgba(126,234,255,.18);
 }
 
+/* Rimuovi la "i" (tooltip ora legale) */
+.top-right small, .info, .tooltip, [data-tip] { display:none !important; }
+
 /* clock sotto il video */
 #ellipseLayer{ z-index:1; pointer-events:none; }
 #mouseGlow{ pointer-events:none; }
@@ -122,13 +125,18 @@ const CONTENT = [
 ];
 
 // 2.c) Video hero che parte davvero su iOS
+function ensureAutoplay(v){
+  v.muted = true; v.autoplay = true; v.playsInline = true;
+  v.setAttribute('playsinline',''); v.setAttribute('webkit-playsinline','');
+  const play = () => v.play().catch(()=> setTimeout(play,300));
+  if (v.readyState >= 2) play(); else v.addEventListener('loadeddata', play, {once:true});
+  v.addEventListener('error', ()=>{ v.src = './videos/teaser-hub-dms.mp4'; ensureAutoplay(v); }, {once:true});
+}
 function createHero(){
   const v = document.createElement('video');
-  v.src = './videos/video-hero.mp4';
-  v.autoplay = true; v.loop = true; v.muted = true;
-  v.playsInline = true; v.setAttribute('playsinline',''); v.setAttribute('webkit-playsinline','');
-  v.style.background = '#000';
-  v.addEventListener('loadeddata', ()=> v.play().catch(()=>{}), {once:true});
+  v.src = './videos/video-hero.mp4'; v.style.background = '#000';
+  v.controls = false;
+  ensureAutoplay(v);
   return v;
 }
 
