@@ -23,19 +23,37 @@
   <main class="wrap">
     <!-- Stage: contiene hero e i nodi PDF disposti a orologio -->
     <section class="stage" id="stage">
-      <!-- HERO video: resta dentro il wrapper, 16:9, radius 16 -->
-      <div class="media-16x9" id="hero">
-        <!-- Sostituisci il poster e il src con i tuoi asset -->
-        <video
-          src="videos/video-hero.mp4"
-          poster="images/hero-poster.jpg"
-          preload="metadata"
-          muted
-          autoplay
-          loop
-          playsinline
-          webkit-playsinline
-        ></video>
+      <!-- FINESTRA INFORMATIVA: sostituisce il video con info testuali -->
+<div class="info-window" id="hero">
+        <div class="info-header">
+          <h2>Video • Teaser Hub</h2>
+        </div>
+        <div class="info-content">
+          <div class="info-row">
+            <span class="label">Quando:</span>
+            <span class="value">-</span>
+          </div>
+          <div class="info-row">
+            <span class="label">Norme:</span>
+            <span class="value">-</span>
+          </div>
+          <div class="info-row">
+            <span class="label">Ministeri/Enti:</span>
+            <span class="value">-</span>
+          </div>
+          <div class="info-row">
+            <span class="label">Dati:</span>
+            <span class="value">-</span>
+          </div>
+          <div class="info-row">
+            <span class="label">Output:</span>
+            <span class="value">-</span>
+          </div>
+          <div class="info-row">
+            <span class="label">Dipendenze:</span>
+            <span class="value">-</span>
+          </div>
+        </div>
       </div>
 
       <!-- Anchor: sarà posizionata via JS al centro dell'hero -->

@@ -1,7 +1,7 @@
-// ===== Layout corona PDF attorno all'hero (no lancetta) =====
+// ===== Layout corona PDF attorno alla finestra informativa =====
 (() => {
   const stage = document.getElementById('stage');
-  const hero  = document.getElementById('hero');
+  const hero  = document.getElementById('hero'); // ora è .info-window
   const anchor= document.getElementById('anchor');
   const nodes = Array.from(stage.querySelectorAll('.pdf-node'));
   if (!stage || !hero || !anchor || !nodes.length) return;
@@ -9,11 +9,11 @@
   function layout(){
     const r = hero.getBoundingClientRect();
     const s = stage.getBoundingClientRect();
-    // centro dell'hero relativo allo stage
+    // centro della finestra informativa relativo allo stage
     const cx = (r.left - s.left) + r.width/2;
     const cy = (r.top  - s.top ) + r.height/2;
-    // raggio: metà del lato minore + margine ampio per finestra piccola
-    const rad = Math.round(Math.min(r.width, r.height)/2 + 220);
+    // raggio: metà del lato minore + margine per non toccare la finestra
+    const rad = Math.round(Math.min(r.width, r.height)/2 + 160);
     stage.style.setProperty('--cx', cx + 'px');
     stage.style.setProperty('--cy', cy + 'px');
     stage.style.setProperty('--rad', rad + 'px');
