@@ -30,7 +30,7 @@ body{margin:0;background:#0f3e49;color:#eaf6fb;font-family:system-ui,-apple-syst
 
 /* ===== Stage: hero + corona PDF ===== */
 .stage{position:relative;margin-top:12px;min-height:480px;isolation:isolate}
-.media-16x9{position:relative;width:min(960px, 82%);margin:0 auto;border-radius:16px;overflow:hidden;background:#000;box-shadow:0 16px 40px rgba(0,0,0,.35)}
+.media-16x9{position:relative;width:min(600px, 50%);margin:0 auto;border-radius:16px;overflow:hidden;background:#000;box-shadow:0 16px 40px rgba(0,0,0,.35)}
 .media-16x9::before{content:"";display:block;padding-top:56.25%}
 .media-16x9 video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
 /* Anchor invisibile: JS la posiziona al centro dell'hero */
