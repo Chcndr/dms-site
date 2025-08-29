@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>DMS – Mappa Neurale</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { 
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(135deg, #0f3446 0%, #1a5f7a 100%);
+      color: white;
+      min-height: 100vh;
+      overflow: hidden;
+    }
+    
+    .header {
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      z-index: 100;
+    }
+    
+    .back-btn {
+      background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.2);
+      color: white;
+      padding: 8px 16px;
+      border-radius: 6px;
+      text-decoration: none;
+      font-size: 14px;
+      backdrop-filter: blur(10px);
+      transition: all 0.3s ease;
+    }
+    
+    .back-btn:hover {
+      background: rgba(255,255,255,0.2);
+      transform: translateY(-1px);
+    }
+    
+    .mindmap-container {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+    }
+    
+    .node {
+      position: absolute;
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      font-size: 12px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      border: 2px solid rgba(255,255,255,0.3);
+      backdrop-filter: blur(10px);
+    }
+    
+    .node:hover {
+      transform: scale(1.1);
+      box-shadow: 0 0 30px rgba(255,255,255,0.4);
+    }
+    
+    .node.central {
+      width: 180px;
+      height: 180px;
+      background: rgba(0,123,186,0.8);
+      border-color: #00bcd4;
+      font-size: 16px;
+    }
+    
+    .node.commerce { background: rgba(76,175,80,0.7); }
+    .node.digital { background: rgba(156,39,176,0.7); }
+    .node.data { background: rgba(255,152,0,0.7); }
+    .node.ai { background: rgba(244,67,54,0.7); }
+    .node.network { background: rgba(63,81,181,0.7); }
+    .node.innovation { background: rgba(255,193,7,0.7); }
+    
+    .connection {
+      position: absolute;
+      height: 2px;
+      background: linear-gradient(90deg, rgba(255,255,255,0.3), rgba(0,188,212,0.6), rgba(255,255,255,0.3));
+      transform-origin: left center;
+      animation: pulse 3s ease-in-out infinite;
+    }
+    
+    @keyframes pulse {
+      0%, 100% { opacity: 0.3; }
+      50% { opacity: 0.8; }
+    }
+    
+    .title {
+      position: absolute;
+      top: 30px;
+      right: 30px;
+      text-align: right;
+      z-index: 50;
+    }
+    
+    .title h1 {
+      font-size: 2.5rem;
+      font-weight: 800;
+      margin-bottom: 10px;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+    }
+    
+    .title p {
+      font-size: 1.1rem;
+      opacity: 0.9;
+      font-weight: 300;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <a href="./home.html" class="back-btn">← Torna all'Orologio</a>
+  </div>
+  
+  <div class="title">
+    <h1>MAPPA NEURALE</h1>
+    <p>DMS • Ecosistema Digitale</p>
+  </div>
+  
+  <div class="mindmap-container" id="mindmap">
+    <!-- I nodi verranno generati dinamicamente -->
+  </div>
+
+  <script>
+    const nodes = [
+      { id: 'central', text: 'DMS\nHUB DIGITALE', class: 'central', x: 0.5, y: 0.5 },
+      { id: 'commerce', text: 'COMMERCIO\nTRADIZIONALE', class: 'commerce', x: 0.2, y: 0.3 },
+      { id: 'digital', text: 'TRASFORMAZIONE\nDIGITALE', class: 'digital', x: 0.8, y: 0.2 },
+      { id: 'data', text: 'BIG DATA\nANALYTICS', class: 'data', x: 0.15, y: 0.7 },
+      { id: 'ai', text: 'INTELLIGENZA\nARTIFICIALE', class: 'ai', x: 0.85, y: 0.8 },
+      { id: 'network', text: 'NETWORK\nTERRITORIALE', class: 'network', x: 0.5, y: 0.15 },
+      { id: 'innovation', text: 'INNOVAZIONE\nSOSTENIBILE', class: 'innovation', x: 0.5, y: 0.85 }
+    ];
+    
+    const connections = [
+      ['central', 'commerce'],
+      ['central', 'digital'],
+      ['central', 'data'],
+      ['central', 'ai'],
+      ['central', 'network'],
+      ['central', 'innovation'],
+      ['commerce', 'data'],
+      ['digital', 'ai'],
+      ['network', 'innovation']
+    ];
+    
+    function createMindmap() {
+      const container = document.getElementById('mindmap');
+      const width = window.innerWidth;
+      const height = window.innerHeight;
+      
+      // Crea connessioni
+      connections.forEach(([from, to]) => {
+        const fromNode = nodes.find(n => n.id === from);
+        const toNode = nodes.find(n => n.id === to);
+        
+        const x1 = fromNode.x * width;
+        const y1 = fromNode.y * height;
+        const x2 = toNode.x * width;
+        const y2 = toNode.y * height;
+        
+        const length = Math.sqrt((x2-x1)**2 + (y2-y1)**2);
+        const angle = Math.atan2(y2-y1, x2-x1) * 180 / Math.PI;
+        
+        const connection = document.createElement('div');
+        connection.className = 'connection';
+        connection.style.left = x1 + 'px';
+        connection.style.top = y1 + 'px';
+        connection.style.width = length + 'px';
+        connection.style.transform = `rotate(${angle}deg)`;
+        container.appendChild(connection);
+      });
+      
+      // Crea nodi
+      nodes.forEach(node => {
+        const element = document.createElement('div');
+        element.className = `node ${node.class}`;
+        element.textContent = node.text;
+        element.style.left = (node.x * width - (node.class === 'central' ? 90 : 60)) + 'px';
+        element.style.top = (node.y * height - (node.class === 'central' ? 90 : 60)) + 'px';
+        
+        element.addEventListener('click', () => {
+          alert(`Nodo: ${node.text.replace('\n', ' ')}`);
+        });
+        
+        container.appendChild(element);
+      });
+    }
+    
+    // Inizializza la mappa
+    createMindmap();
+    
+    // Ridisegna su resize
+    window.addEventListener('resize', () => {
+      document.getElementById('mindmap').innerHTML = '';
+      createMindmap();
+    });
+  </script>
+</body>
+</html>
+
