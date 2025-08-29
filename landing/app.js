@@ -12,8 +12,8 @@
     // centro dell'hero relativo allo stage
     const cx = (r.left - s.left) + r.width/2;
     const cy = (r.top  - s.top ) + r.height/2;
-    // raggio: metà del lato minore + margine maggiore per non toccare il video
-    const rad = Math.round(Math.min(r.width, r.height)/2 + 180);
+    // raggio: metà del lato minore + margine ampio per finestra piccola
+    const rad = Math.round(Math.min(r.width, r.height)/2 + 220);
     stage.style.setProperty('--cx', cx + 'px');
     stage.style.setProperty('--cy', cy + 'px');
     stage.style.setProperty('--rad', rad + 'px');
