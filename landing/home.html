@@ -23,11 +23,25 @@
   <main class="wrap">
     <!-- Stage: contiene hero e i nodi PDF disposti a orologio -->
     <section class="stage" id="stage">
-      <!-- FINESTRA INFORMATIVA: sostituisce il video con info testuali -->
-<div class="info-window" id="hero">
+      <!-- FINESTRA COMBINATA: video + informazioni testuali -->
+      <div class="media-info-window" id="hero">
         <div class="info-header">
           <h2>Video • Teaser Hub</h2>
         </div>
+        
+        <div class="video-section">
+          <video
+            src="videos/video-hero.mp4"
+            poster="images/hero-poster.jpg"
+            preload="metadata"
+            muted
+            autoplay
+            loop
+            playsinline
+            webkit-playsinline
+          ></video>
+        </div>
+        
         <div class="info-content">
           <div class="info-row">
             <span class="label">Quando:</span>
