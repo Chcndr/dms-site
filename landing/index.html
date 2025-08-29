@@ -31,7 +31,7 @@ radial-gradient(900px 800px at 120% 10%,rgba(11,95,255,.12),transparent 60%),var
   <div class="header">
     <div class="brand"><div class="logo"></div><h1>DMS — Hub di Prossimità</h1></div>
     <div>
-      <a class="btn" href="#" onclick="openModal();return false;">🎬 Spot</a>
+      <a class="btn" href="./index.html">🎬 Spot</a>
       <a class="btn" href="./mindmap.html">🧠 Mappa</a>
     </div>
   </div>
@@ -77,43 +77,5 @@ radial-gradient(900px 800px at 120% 10%,rgba(11,95,255,.12),transparent 60%),var
   </div>
 </div>
 
-<!-- Modal iniziale -->
-<div class="modal" id="modal" aria-hidden="true">
-  <div class="box">
-    <video id="spot" autoplay muted playsinline webkit-playsinline controls preload="auto">
-      <!-- slot principale -->
-      <source src="./videos/video-hero.mp4" type="video/mp4">
-      <!-- fallback -->
-      <source src="./videos/teaser-hub-dms.mp4" type="video/mp4">
-    </video>
-    <div class="actions">
-      <a class="a" href="#" onclick="closeModal();return false;">Chiudi</a>
-    </div>
-  </div>
-</div>
-
-<script>
-const modal = document.getElementById('modal');
-const spot  = document.getElementById('spot');
-
-function tryPlay(){
-  if (!spot) return;
-  spot.muted = true;
-  spot.autoplay = true;
-  spot.playsInline = true;
-  spot.setAttribute('playsinline','');
-  spot.setAttribute('webkit-playsinline','');
-  const play = ()=> spot.play().catch(()=> setTimeout(play,300));
-  if (spot.readyState >= 2) play();
-  else spot.addEventListener('loadeddata', play, {once:true});
-}
-
-function openModal(){ modal.classList.add('show'); tryPlay(); }
-function closeModal(){ if (spot){ spot.pause(); spot.currentTime = 0; } modal.classList.remove('show'); }
-
-modal.addEventListener('click', e=>{ if (e.target === modal) closeModal(); });
-document.addEventListener('keydown', e=>{ if (e.key === 'Escape') closeModal(); });
-window.addEventListener('load', ()=> setTimeout(openModal,120));
-</script>
 </body>
 </html>
