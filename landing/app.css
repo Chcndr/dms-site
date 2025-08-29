@@ -1,69 +1,68 @@
-/* ===== Reset essenziale e base ===== */
+/* ===== Base ===== */
 *{box-sizing:border-box}
 html{-webkit-text-size-adjust:100%}
-html,body{height:100%}
-body{
-  margin:0;
-  font-family:system-ui,-apple-system,"Segoe UI",Roboto,Ubuntu,"Helvetica Neue",Arial,sans-serif;
-  color:#eef6fb;
-  background: radial-gradient(1200px 600px at 30% 0%, #203243 0%, #172B3A 40%, #112534 100%);
-}
+body{margin:0;background:#0f3e49;color:#eaf6fb;font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,"Helvetica Neue",Arial,sans-serif}
 
-/* ===== Wrapper comune (NON CAMBIARE larghezza) ===== */
-.wrap{
-  /* Lasciare questa misura: è l'impostazione "perfetta" precedente */
-  max-width:1200px;               /* 👈 se prima era 1200 resta 1200 */
+/* ===== Header: chip a sinistra, titolo a destra ===== */
+.site-head{
+  display:grid;
+  grid-template-columns: 1fr auto;
+  align-items:start;
+  gap:16px;
+  max-width:1400px;
   margin:0 auto;
-  padding:16px calc(16px + env(safe-area-inset-right))
-          32px calc(16px + env(safe-area-inset-left));
+  padding:16px calc(16px + env(safe-area-inset-right)) 0 calc(16px + env(safe-area-inset-left));
 }
-
-/* ===== Chip / pulsanti ===== */
-.badge-bar{
-  display:flex; flex-wrap:wrap; gap:10px;
-  align-items:center; margin:0 0 10px 0;
-}
+.head-left{display:flex;gap:10px;flex-wrap:wrap}
 .chip{
-  display:inline-flex; align-items:center; gap:.5rem;
-  padding:.5rem .8rem; border-radius:12px;
-  border:1px solid #2a7f96;
-  background:rgba(255,255,255,.08);
-  text-decoration:none; color:#eaf6fb; font-weight:700;
-  box-shadow:0 1px 0 rgba(0,0,0,.25), inset 0 1px 0 rgba(255,255,255,.06);
+  display:inline-flex;align-items:center;gap:.45rem;
+  padding:.5rem .8rem;border-radius:12px;
+  border:1px solid #2a7f96;background:rgba(255,255,255,.08);
+  color:#eaf6fb;text-decoration:none;font-weight:700;
+  box-shadow:0 1px 0 rgba(0,0,0,.25), inset 0 1px 0 rgba(255,255,255,.05);
 }
+.site-title{margin:4px 0 0;text-align:right}
+.site-title .big{display:block;font-weight:900;font-size:clamp(22px,3.2vw,40px);letter-spacing:.02em}
+.site-title .sub{display:block;font-weight:700;opacity:.9}
 
-/* ===== Titolo ===== */
-.page-title{
-  margin:8px 0 14px; font-weight:900; line-height:1.15;
-  font-size:clamp(22px, 3vw, 42px);
-  text-wrap:balance; /* distribuisce meglio su 2 righe */
+/* ===== Wrapper principale ===== */
+.wrap{max-width:1400px;margin:0 auto;padding:10px calc(16px + env(safe-area-inset-right)) 40px calc(16px + env(safe-area-inset-left))}
+
+/* ===== Stage: hero + corona PDF ===== */
+.stage{position:relative;margin-top:12px;min-height:480px;isolation:isolate}
+.media-16x9{position:relative;width:min(960px, 82%);margin:0 auto;border-radius:16px;overflow:hidden;background:#000;box-shadow:0 16px 40px rgba(0,0,0,.35)}
+.media-16x9::before{content:"";display:block;padding-top:56.25%}
+.media-16x9 video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
+/* Anchor invisibile: JS la posiziona al centro dell'hero */
+.anchor{position:absolute;width:0;height:0;left:50%;top:50%}
+
+/* ===== Nodi PDF disposti a orologio attorno all'hero ===== */
+.pdf-node{
+  position:absolute;
+  left:var(--cx,50%); top:var(--cy,50%);  /* centro dell'hero */
+  transform: translate(-50%,-50%) rotate(var(--a)) translateX(var(--rad,400px)) rotate(calc(-1 * var(--a)));
+  padding:.48rem .7rem;border-radius:12px;border:1px solid #2a7f96;
+  background:rgba(255,255,255,.06);color:#eaf6fb;font-weight:800;
+  box-shadow:0 1px 0 rgba(0,0,0,.25), inset 0 1px 0 rgba(255,255,255,.05);
+  transition:box-shadow .2s ease, background .2s ease;
 }
-
-/* ===== Hero video DENTRO al wrapper ===== */
-.hero{ margin:0; }
-.media-16x9{
-  position:relative; width:100%;
-  border-radius:16px; overflow:hidden; background:#000;
-  box-shadow: 0 12px 30px rgba(0,0,0,.35);
-  min-height:300px; /* Altezza minima robusta per tutti i dispositivi */
-  aspect-ratio:16/9; /* Mantiene proporzioni quando possibile */
+.pdf-node:hover{background:rgba(255,255,255,.12);box-shadow:0 0 18px rgba(42,127,150,.45)}
+.pdf-node::after{
+  content: attr(data-title);
+  position:absolute;left:50%;top:calc(100% + 6px);transform:translateX(-50%);
+  background:rgba(0,0,0,.6);color:#fff;border-radius:8px;padding:.22rem .46rem;white-space:nowrap;
+  opacity:0;pointer-events:none;transition:opacity .2s ease;font-weight:700
 }
+.pdf-node:hover::after{opacity:1}
 
-.media-16x9 video{
-  position:absolute; inset:0; width:100%; height:100%;
-  object-fit:cover; display:block; border:0;
+/* ===== Responsive: su tablet stretti/mettiamo la griglia per i PDF ===== */
+@media (max-width:1024px){
+  .site-head{grid-template-columns:1fr}
+  .site-title{text-align:left}
+  .media-16x9{width:100%}
+  .stage{min-height:auto}
+  .anchor{display:none}
+  /* i PDF vanno sotto il video a griglia */
+  #stage{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:8px}
+  .pdf-node{position:static;transform:none}
 }
-
-/* ===== Guardrail anti-regressione sotto 1600px ===== */
-@media (max-width:1600px){
-  .badge-bar, .page-title, .hero{
-    position:static !important; transform:none !important;
-    margin-left:0 !important; margin-right:0 !important;
-  }
-}
-
-/* ===== Accessibilità ===== */
-@media (prefers-reduced-motion: reduce){
-  .media-16x9 video{ animation:none }
-}
-

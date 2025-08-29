@@ -7,21 +7,25 @@
   <link rel="stylesheet" href="app.css">
 </head>
 <body>
-  <main class="wrap">
-    <nav class="badge-bar" aria-label="Azioni principali">
-      <a class="chip" href="#pdf1">PDF</a>
+  <header class="site-head">
+    <div class="head-left">
       <a class="chip" href="#spot">🎬 Spot</a>
       <a class="chip" href="#mappa">🗺️ Mappa</a>
-      <a class="chip" href="#pdf2">PDF</a>
-    </nav>
+    </div>
+    <div class="head-right">
+      <h1 class="site-title">
+        <span class="big">GEMELLO DIGITALE DEL COMMERCIO</span>
+        <span class="sub">DMS • Orologio&nbsp;roadmap</span>
+      </h1>
+    </div>
+  </header>
 
-    <h1 class="page-title">
-      GEMELLO DIGITALE DEL COMMERCIO — DMS • Orologio&nbsp;roadmap
-    </h1>
-
-    <!-- HERO: DEVE STARE DENTRO LO STESSO WRAPPER -->
-    <section class="hero" aria-label="Video introduttivo">
-      <div class="media-16x9">
+  <main class="wrap">
+    <!-- Stage: contiene hero e i nodi PDF disposti a orologio -->
+    <section class="stage" id="stage">
+      <!-- HERO video: resta dentro il wrapper, 16:9, radius 16 -->
+      <div class="media-16x9" id="hero">
+        <!-- Sostituisci il poster e il src con i tuoi asset -->
         <video
           src="videos/video-hero.mp4"
           poster="images/hero-poster.jpg"
@@ -33,10 +37,26 @@
           webkit-playsinline
         ></video>
       </div>
+
+      <!-- Anchor: sarà posizionata via JS al centro dell'hero -->
+      <div id="anchor" class="anchor" aria-hidden="true"></div>
+
+      <!-- Nodi PDF (12 posizioni) — modifica data-url/titolo liberamente -->
+      <button class="pdf-node" style="--a:0deg"    data-url="#pdf1"  data-title="Executive Summary">PDF</button>
+      <button class="pdf-node" style="--a:30deg"   data-url="#pdf2"  data-title="Hub &amp; DMS">PDF</button>
+      <button class="pdf-node" style="--a:60deg"   data-url="#pdf3"  data-title="Roadmap HUB">PDF</button>
+      <button class="pdf-node" style="--a:90deg"   data-url="#pdf4"  data-title="Casi d’Uso">PDF</button>
+      <button class="pdf-node" style="--a:120deg"  data-url="#pdf5"  data-title="Interoperabilità PDND">PDF</button>
+      <button class="pdf-node" style="--a:150deg"  data-url="#pdf6"  data-title="SUAP &amp; Subingressi">PDF</button>
+      <button class="pdf-node" style="--a:180deg"  data-url="#pdf7"  data-title="Polizia Municipale">PDF</button>
+      <button class="pdf-node" style="--a:210deg"  data-url="#pdf8"  data-title="Pagamenti &amp; PagoPA">PDF</button>
+      <button class="pdf-node" style="--a:240deg"  data-url="#pdf9"  data-title="Token &amp; Sostenibilità">PDF</button>
+      <button class="pdf-node" style="--a:270deg"  data-url="#pdf10" data-title="WebGIS &amp; Mappa">PDF</button>
+      <button class="pdf-node" style="--a:300deg"  data-url="#pdf11" data-title="Governance">PDF</button>
+      <button class="pdf-node" style="--a:330deg"  data-url="#pdf12" data-title="Costi &amp; Bandi ER">PDF</button>
     </section>
   </main>
 
   <script src="app.js"></script>
 </body>
 </html>
-
