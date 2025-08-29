@@ -43,9 +43,10 @@
 /* Rimuovi la "i" (tooltip ora legale) */
 .top-right small, .info, .tooltip, [data-tip], [aria-label], [title] { display:none !important; }
 
-/* clock sotto il video */
-#ellipseLayer{ z-index:1; pointer-events:none; }
-#mouseGlow{ pointer-events:none; }
+/* Z-index corretti per layering */
+#ellipseLayer{position:absolute; inset:0; z-index:2; pointer-events:none;}
+#viewport{position:absolute; z-index:3; border-radius:22px; overflow:hidden;}
+.node{position:absolute; z-index:4;}
 
 /* mouse glow sotto tutto il contenuto interattivo */
 #mouseGlow{
@@ -277,6 +278,20 @@ layout();
 window.addEventListener('pageshow', ()=> {
   const v = view.querySelector('video'); if(v){ v.muted=true; v.play().catch(()=>{}); }
 });
+
+// Assicura video hero nel viewport
+const view = document.getElementById('viewport');
+(function ensureHero(){
+  if (!view || view.firstChild) return;
+  const v = document.createElement('video');
+  v.src = './videos/video-hero.mp4';
+  v.loop = true; v.muted = true; v.autoplay = true;
+  v.playsInline = true; v.setAttribute('playsinline',''); v.setAttribute('webkit-playsinline','');
+  view.appendChild(v);
+  const play=()=>v.play().catch(()=>setTimeout(play,300));
+  if (v.readyState>=2) play(); else v.addEventListener('loadeddata', play, {once:true});
+  v.addEventListener('error', ()=>{ v.src='./videos/teaser-hub-dms.mp4'; v.load(); play(); }, {once:true});
+})();
 </script>
 </body>
 </html>
