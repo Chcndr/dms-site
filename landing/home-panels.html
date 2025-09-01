@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+  <title>DMS • Orologio roadmap</title>
+  <link rel="icon" href="data:,">
+  <style>
+    :root{
+      --bg1:#071a1d; --bg2:#0b2730;
+      --ink:#e8fbff; --ink-2:#9bd6de;
+      --accent:#14b8a6;
+      --hc:#23b5a6; /* hover color default */
+      
+      /* scala armonica: rosso → arancio → giallo → giallo-verde → verde */
+      --hc0:#e11d48;  /* rosso acceso */
+      --hc1:#f97316;  /* arancio intenso */
+      --hc2:#fb923c;  /* arancio chiaro */
+      --hc3:#fbbf24;  /* ambra */
+      --hc4:#eab308;  /* giallo scuro */
+      --hc5:#d9f000;  /* giallo pieno */
+      --hc6:#bde34a;  /* giallo-verde */
+      --hc7:#9bdc4b;  /* verde-giallo */
+      --hc8:#66c653;  /* verde medio */
+      --hc9:#36b24a;  /* verde intenso */
+      --hc10:#22a866; /* verde con punta teal */
+      --hc11:#21c55d; /* verde acceso (finale) */
+    }
+
+    /* fondo */
+    html,body{height:100%;margin:0}
+    body{
+      background: radial-gradient(1400px 900px at 50% 20%, #0f3640 0%, var(--bg1) 35%, var(--bg2) 100%);
+      color:var(--ink); font: 16px/1.4 system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+      overflow:hidden;
+    }
+
+    /* nav+claim */
+    .top{position:fixed; left:16px; top:16px; display:flex; gap:10px; z-index:10}
+    .btn{
+      padding:.55rem .9rem; border-radius:14px; border:1.5px solid rgba(255,255,255,.22);
+      background: rgba(255,255,255,.06); backdrop-filter: blur(6px);
+      text-decoration:none; color:var(--ink); font-weight:600
+    }
+    .claim{position:fixed; right:20px; top:26px; text-align:right; z-index:10}
+    .claim h1{margin:0 0 6px; letter-spacing:.02em; font-size:32px; line-height:1.1}
+    .claim p{margin:0; color:var(--ink-2); font-weight:500}
+
+    /* LAYER BLINDATI - layering sicuro */
+    #glowLayer   { position:fixed; inset:0; z-index:1; pointer-events:none; }
+    #ellipseLayer{ position:fixed; inset:0; z-index:2; pointer-events:none; }
+    #viewport    { position:fixed;           z-index:3; }
+    .node        { position:fixed; left:0; top:0; z-index:4; }
+
+    /* Stile lancetta (dentro l'SVG #ellipseLayer) */
+    #hand-shaft { stroke: rgba(255,255,255,.85); stroke-width: 4; stroke-linecap: round; }
+    #hand-tip   { fill: rgba(255,255,255,.92); }
+
+    /* Video */
+    #viewport{
+      display:flex; align-items:center; justify-content:center;
+    }
+    #viewport > video{
+      width:100%; height:100%; object-fit:cover; border-radius:16px;
+      box-shadow: 0 24px 60px rgba(0,0,0,.35), 0 0 0 1px rgba(255,255,255,.08) inset;
+      background:#0c1e25;
+    }
+
+    /* card neutra vetrosa - stile mockup */
+    .node{
+      position:absolute;
+      width:140px; height:140px;
+      border-radius:22px;
+      background:rgba(255,255,255,.06);
+      border:1px solid rgba(255,255,255,.14);
+      box-shadow:
+        0 14px 34px rgba(0,0,0,.45),
+        inset 0 0 0 1px rgba(255,255,255,.12);
+      color:var(--ink); font-weight:600; letter-spacing:.02em;
+      display:grid; place-items:center;
+      transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+      will-change: transform, box-shadow;
+      z-index:4; /* layer confermato */
+    }
+    .tag{opacity:.9}
+
+    /* hover/focus con colore variabile per ogni pulsante */
+    .node:is(:hover,:focus-visible){
+      box-shadow:
+        0 0 0 3px color-mix(in srgb, var(--hc) 90%, white 10%),
+        0 0 32px 10px color-mix(in srgb, var(--hc) 65%, transparent),
+        0 14px 34px rgba(0,0,0,.55),
+        inset 0 0 0 1px rgba(255,255,255,.22);
+      border-color: color-mix(in srgb, var(--hc) 70%, #fff 15%);
+      transform: translateY(-2px);
+    }
+
+    /* alone leggero che segue il mouse */
+    #glowLayer{
+      background:
+        radial-gradient(240px 240px at var(--mx,50%) var(--my,50%),
+          rgba(20,184,166,.22), transparent 60%);
+    }
+
+    /* Puntale lancetta - RIMOSSO (ora in SVG) */
+
+    /* Pannello PDF nel video - stile mockup */
+    .panel{
+      border-radius:28px;
+      background:linear-gradient(180deg, rgba(8,34,38,.72), rgba(8,34,38,.62));
+      box-shadow:
+        0 30px 60px rgba(0,0,0,.50),
+        inset 0 0 0 1px rgba(255,255,255,.10);
+      backdrop-filter: blur(6px);
+      color:#e6f7f4;
+      padding: clamp(18px, 3vw, 28px);
+    }
+
+    /* titolo enorme */
+    .panel h1{
+      margin: 0 0 .6em 0;
+      font-weight: 800;
+      font-size: clamp(28px, 4.4vw, 56px);
+      letter-spacing: .02em;
+    }
+
+    /* sottotitoli */
+    .panel .lead{ font-size: clamp(16px,1.5vw,22px); opacity:.88; margin: .3em 0; }
+
+    /* righe CTA PDF */
+    .panel .cta{
+      display:flex; align-items:center; gap:12px;
+      margin-top:14px;
+      padding:18px 22px;
+      border-radius:14px;
+      border:1px solid rgba(255,255,255,.22);
+      background: rgba(255,255,255,.04);
+      box-shadow: inset 0 2px 0 rgba(255,255,255,.08);
+    }
+    .panel .cta:hover{
+      border-color: color-mix(in srgb, var(--accent) 60%, #fff 20%);
+      box-shadow:
+        0 0 0 2px color-mix(in srgb, var(--accent) 55%, transparent),
+        inset 0 2px 0 rgba(255,255,255,.10);
+      transform: translateY(-1px);
+    }
+    .panel .pdfdot{
+      width:28px; height:28px; border-radius:8px;
+      background: color-mix(in srgb, var(--accent) 22%, #0b1f22);
+      display:grid; place-items:center; font-weight:700; font-size:12px;
+      color:#cfeeea;
+    }
+
+    /* ===== SCHEDA CENTRALE ===== */
+    .dms-card{
+      position:fixed; inset:0; display:flex; align-items:center; justify-content:center;
+      background:rgba(3,6,10,.55); backdrop-filter: blur(4px);
+      z-index: 40; /* sopra lancetta/pivot */
+    }
+    .dms-card[hidden]{ display:none !important; }
+    .dms-card__inner{
+      width:min(880px, 92vw);
+      background:linear-gradient(180deg,rgba(9,14,20,.92),rgba(9,14,20,.88));
+      border:1px solid rgba(255,255,255,.10);
+      border-radius:18px; padding:18px 18px 14px 18px;
+      box-shadow:0 20px 60px rgba(0,0,0,.45);
+      color:#eaf1f8;
+    }
+    .dms-card__head{ display:flex; align-items:center; justify-content:space-between; margin-bottom:8px; }
+    .dms-tag{
+      display:inline-block; padding:6px 10px; border-radius:999px;
+      background:#df3d3d; color:#fff; font-weight:600; font-size:.85rem;
+    }
+    .dms-close{
+      border:0; background:transparent; color:#fff; font-size:22px; line-height:1; cursor:pointer;
+      padding:6px 10px; border-radius:10px;
+    }
+    .dms-card__title{ margin:6px 0 6px; font-size: clamp(18px, 2.4vw, 26px); }
+    .dms-card__desc{ margin:0 0 12px; opacity:.9 }
+    .dms-actions{ display:flex; flex-wrap:wrap; gap:8px; margin:8px 0 6px; }
+    .dms-btn{
+      display:inline-flex; align-items:center; justify-content:center;
+      padding:10px 14px; border-radius:12px;
+      border:1px solid rgba(255,255,255,.15); background:rgba(255,255,255,.06); color:#eaf1f8;
+      text-decoration:none;
+    }
+    .dms-btn--primary{ background:#f04a3a; border-color:#f04a3a; color:#fff; font-weight:600; }
+    .dms-footer{ margin-top:6px; display:flex; justify-content:flex-start; }
+    .dms-chip{
+      padding:8px 12px; border-radius:999px; border:1px solid rgba(255,255,255,.15);
+      background:rgba(255,255,255,.08); color:#eaf1f8; cursor:pointer;
+    }
+
+    /* Facoltativo: highlight del PDF attivo nell'orologio */
+    .node.is-active{ box-shadow:0 0 0 3px rgba(255,255,255,.15), 0 0 25px #ff4d73; }
+  </style>
+</head>
+<body>
+  <!-- Nav -->
+  <nav class="top">
+    <a class="btn" href="../index.html">🎬 Spot</a>
+    <a class="btn" href="../mindmap.html">🧠 Mappa</a>
+  </nav>
+
+  <!-- Claim -->
+  <header class="claim">
+    <h1>GEMELLO DIGITALE<br>DEL COMMERCIO</h1>
+    <p>DMS • Orologio roadmap</p>
+  </header>
+
+  <!-- Layers -->
+  <svg id="ellipseLayer" aria-hidden="true"></svg>
+  <div id="viewport" aria-label="contenuti">
+    <video id="hero" src="../videos/video-hero.mp4"
+      muted playsinline webkit-playsinline preload="metadata" autoplay loop
+      poster="../assets/poster-hero.jpg"></video>
+    
+    <div class="panel" id="panel-0" hidden>
+      <h1>DMS — Riaccendiamo il Commercio</h1>
+      <p class="lead">Visione, gemello nazionale del commercio</p>
+      <p class="lead">L'infrastruttura tecnologica per una rivoluzione digitale nei settori del commercio, turismo e servizi</p>
+
+      <a class="cta" href="./docs/riaccendiamo.pdf" target="_blank" rel="noopener">
+        <span class="pdfdot">PDF</span>
+        <span>Apri documento principale (PDF)</span>
+      </a>
+      <a class="cta" href="./docs/hub-nazionale.pdf" target="_blank" rel="noopener">
+        <span class="pdfdot">PDF</span>
+        <span>Hub Nazionale del Commercio (PDF)</span>
+      </a>
+      <a class="cta" href="./docs/dms-cluster.pdf" target="_blank" rel="noopener">
+        <span class="pdfdot">PDF</span>
+        <span>DMS &amp; CLUST-ER (PDF)</span>
+      </a>
+      <a class="cta" href="./docs/dms-ecc.pdf" target="_blank" rel="noopener">
+        <span class="pdfdot">PDF</span>
+        <span>DMS ECC — Executive (PDF)</span>
+      </a>
+    </div>
+  </div>
+  <div id="glowLayer" aria-hidden="true"></div>
+
+  <!-- 12 pulsanti ore 0..11 -->
+  <button class="node" data-i="0"><span class="tag">PDF</span></button>
+  <button class="node" data-i="1"><span class="tag">PDF</span></button>
+  <button class="node" data-i="2"><span class="tag">PDF</span></button>
+  <button class="node" data-i="3"><span class="tag">PDF</span></button>
+  <button class="node" data-i="4"><span class="tag">PDF</span></button>
+  <button class="node" data-i="5"><span class="tag">PDF</span></button>
+  <button class="node" data-i="6"><span class="tag">PDF</span></button>
+  <button class="node" data-i="7"><span class="tag">PDF</span></button>
+  <button class="node" data-i="8"><span class="tag">PDF</span></button>
+  <button class="node" data-i="9"><span class="tag">PDF</span></button>
+  <button class="node" data-i="10"><span class="tag">PDF</span></button>
+  <button class="node" data-i="11"><span class="tag">PDF</span></button>
+
+  <!-- Puntale lancetta -->
+  <div id="handTip" class="hand-tip" aria-hidden="true">  </div>
+
+  <!-- SCHEDA CENTRALE DMS -->
+  <div id="dmsCard" class="dms-card" hidden>
+    <div class="dms-card__inner">
+      <div class="dms-card__head">
+        <span id="dmsCardTag" class="dms-tag">Percorso</span>
+        <button id="dmsCardClose" class="dms-close" type="button" aria-label="Chiudi">×</button>
+      </div>
+      <h2 id="dmsCardTitle" class="dms-card__title">Titolo scheda</h2>
+      <p id="dmsCardDesc" class="dms-card__desc">Descrizione/abstract del documento.</p>
+
+      <div class="dms-actions">
+        <a id="dmsBtnMain" class="dms-btn dms-btn--primary" target="_blank" rel="noopener">Apri documento principale</a>
+        <a id="dmsBtnA1" class="dms-btn" target="_blank" rel="noopener">Apri allegato</a>
+        <a id="dmsBtnA2" class="dms-btn" target="_blank" rel="noopener">Apri allegato</a>
+        <a id="dmsBtnA3" class="dms-btn" target="_blank" rel="noopener">Apri allegato</a>
+      </div>
+
+      <div class="dms-footer">
+        <button id="dmsBackToVideo" class="dms-chip" type="button">Torna al video</button>
+      </div>
+    </div>
+  </div>
+
+  <script>   (function(){
+      const RATIO = 16/9;
+      const BTN   = 140;
+      const SAFE  = 48;
+      const N     = 12;
+
+      function clamp(v,min,max){ return Math.max(min, Math.min(max, v)); }
+
+      function layout(){
+        const W  = innerWidth, H = innerHeight;
+        const cx = W * 0.50;
+        const cy = H * 0.52;
+
+        // Spazio utile per i NODI dal centro ai bordi
+        const Aroom = Math.min(cx, W-cx) - (SAFE + BTN/2);
+        const Broom = Math.min(cy, H-cy) - (SAFE + BTN/2);
+
+        // Dimensioni video massime
+        let vhMaxFromNodes = 2 * (Broom - (BTN/2 + SAFE));
+        let vwMaxFromNodes = 2 * (Aroom - (BTN/2 + SAFE));
+
+        const vhMaxSoft = H * 0.40;
+        const vwMaxSoft = W * 0.58;
+
+        let vh = clamp(vhMaxFromNodes, 180, vhMaxSoft);
+        let vw = Math.min(vh * RATIO, vwMaxSoft, vwMaxFromNodes);
+
+        if (vw > vwMaxFromNodes) {
+          vw = vwMaxFromNodes;
+          vh = vw / RATIO;
+        }
+
+        // Riduci se serve più spazio ai nodi
+        for (let k=0; k<8; k++){
+          const topClear    = (cy - vh/2) - (SAFE + BTN/2);
+          const bottomClear = (H - (cy + vh/2)) - (SAFE + BTN/2);
+          if (Math.min(topClear, bottomClear) >= BTN*0.75) break;
+          vh *= 0.90; vw = vh * RATIO;
+        }
+
+        // Applica il video centrato
+        const vp = document.getElementById('viewport');
+        vp.style.width  = vw + 'px';
+        vp.style.height = vh + 'px';
+        vp.style.left   = (cx - vw/2) + 'px';
+        vp.style.top    = (cy - vh/2) + 'px';
+
+        // Semi-assi ellisse OVALE: laterali quasi a bordo, verticali equilibrati
+        const GAP = 80; // spazio tra video e pulsanti verticali
+        const a = (W/2) - SAFE - (BTN/2); // semiasse orizzontale massimo
+        const b = (vh/2) + GAP + (BTN/2);  // semiasse verticale equilibrato
+
+        // Posiziona i 12 pulsanti
+        const nodes = document.querySelectorAll('.node');
+        nodes.forEach((el, i) => {
+          const t = -Math.PI/2 + (2*Math.PI*i)/N;
+          const x = cx + a * Math.cos(t) - BTN/2;
+          const y = cy + b * Math.sin(t) - BTN/2;
+          el.style.transform = `translate(${Math.round(x)}px,${Math.round(y)}px)`;
+        });
+      }
+
+      layout();
+      addEventListener('resize', layout, {passive:true});
+      addEventListener('pageshow', layout);
+    })();
+
+    // spotlight mouse
+    (function(){
+      const glow = document.getElementById('glowLayer');
+      let mx=0, my=0, ticking=false;
+      addEventListener('pointermove', e => {
+        mx=e.clientX; my=e.clientY;
+        if(!ticking){
+          requestAnimationFrame(()=>{ 
+            glow.style.setProperty('--mx', mx+'px');
+            glow.style.setProperty('--my', my+'px');
+            ticking=false;
+          });
+          ticking=true;
+        }
+      }, {passive:true});
+    })();
+
+    // Puntale lancetta animato con asta - RIMOSSO (sostituito da handLayer)
+  </script>
+
+  <script>
+    // Lancetta ellittica sotto al video + puntale
+    (() => {
+      const svg = document.getElementById('ellipseLayer');
+      if (!svg) return;
+
+      // Crea elementi (una sola volta) dentro l'SVG
+      let shaft = svg.querySelector('#hand-shaft');
+      let tip   = svg.querySelector('#hand-tip');
+      if (!shaft) {
+        shaft = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+        shaft.setAttribute('id','hand-shaft');
+        svg.appendChild(shaft);
+      }
+      if (!tip) {
+        tip = document.createElementNS('http://www.w3.org/2000/svg','polygon');
+        tip.setAttribute('id','hand-tip');
+        svg.appendChild(tip);
+      }
+
+      // Utility: calcola ellisse usata anche per i pulsanti
+      function computeEllipse() {
+        const W = innerWidth, H = innerHeight;
+        const cx = W/2;
+        const cy = H*0.52;                 // stesso centro usato per i nodi
+        const btn = 140;                   // diametro card approx (usa il tuo valore se in :root)
+        const SAFE = 26;                   // margine sicurezza dal video/bordi
+        const a = Math.min(W*0.44, W/2 - btn/2 - SAFE); // semiasse orizzontale
+        const b = Math.min(H*0.34, H/2 - btn/2 - SAFE); // semiasse verticale
+        return {cx, cy, a, b};
+      }
+
+      // Aggiorna dimensioni dell'SVG a tutto schermo
+      function sizeSVG() {
+        svg.setAttribute('width', innerWidth);
+        svg.setAttribute('height', innerHeight);
+        svg.setAttribute('viewBox', `0 0 ${innerWidth} ${innerHeight}`);
+      }
+
+      // Disegna lancetta all'angolo t (radiani) con puntale triangolare
+      function drawHand(t) {
+        const {cx, cy, a, b} = computeEllipse();
+
+        // punta sulla traiettoria ellittica, arretrata di pochi px per non toccare i pulsanti
+        const MARGIN = 18;
+        const x2 = cx + (a - MARGIN) * Math.cos(t);
+        const y2 = cy + (b - MARGIN) * Math.sin(t);
+
+        // base in centro
+        const x1 = cx, y1 = cy;
+
+        // applica alla "asta"
+        shaft.setAttribute('x1', x1);
+        shaft.setAttribute('y1', y1);
+        shaft.setAttribute('x2', x2);
+        shaft.setAttribute('y2', y2);
+
+        // puntale triangolare orientato lungo la direzione della lancetta
+        const ang = Math.atan2(y2 - y1, x2 - x1);  // direzione
+        const TIP_LEN = 16;                         // lunghezza punta
+        const TIP_W   = 12;                         // larghezza base
+        const bx = x2 - TIP_LEN * Math.cos(ang);   // centro base
+        const by = y2 - TIP_LEN * Math.sin(ang);
+        const nx =  Math.sin(ang), ny = -Math.cos(ang); // normale
+
+        const p1x = x2,  p1y = y2;                                    // vertice punta
+        const p2x = bx + (TIP_W/2) * nx, p2y = by + (TIP_W/2) * ny;   // base dx
+        const p3x = bx - (TIP_W/2) * nx, p3y = by - (TIP_W/2) * ny;   // base sx
+        tip.setAttribute('points', `${p1x},${p1y} ${p2x},${p2y} ${p3x},${p3y}`);
+      }
+
+      // Animazione continua (segue l'ovale, non un cerchio) – velocità dolce
+      let t = -Math.PI/2;           // parte da ore 12
+      function tick() {
+        sizeSVG();
+        drawHand(t);
+        t += 0.008;                 // velocità (regola se serve)
+        requestAnimationFrame(tick);
+      }
+      tick();
+
+      // Re-layout su resize/bfcache
+      addEventListener('resize',   () => { sizeSVG(); });
+      addEventListener('pageshow', () => { sizeSVG(); });
+    })();
+  </script>
+
+  <script>
+(function(){
+  const root   = document.documentElement;
+  const panel  = document.getElementById('panel');
+  const hero   = document.getElementById('hero');
+  const back   = document.getElementById('panel-back');
+
+  function safeHref(u){ try { return encodeURI(u); } catch { return '#'; } }
+
+  function buildLinks(meta){
+    const links = [];
+    if(meta?.pdf) links.push(['Apri documento principale (PDF)', meta.pdf]);
+    (meta?.more||[]).forEach((u,idx)=> links.push([`Apri allegato ${idx+1} (PDF)`, u]));
+    return links.map(([label, href]) =>
+      `<a class="btn" href="${safeHref(href)}" target="_blank" rel="noopener">${label}</a>`
+    ).join(' ');
+  }
+
+  window.__openPanelByIndex = function(i, meta){
+    const node = document.querySelector(`.node[data-i="${i}"]`) || document.querySelectorAll('.node')[i];
+    const c = node ? getComputedStyle(node).getPropertyValue('--hc').trim() : '#14b8a6';
+    root.style.setProperty('--accent', c || '#14b8a6');
+
+    document.getElementById('panel-title').textContent = meta?.title || `Modulo ${i}`;
+    document.getElementById('panel-sub').textContent   = meta?.when || meta?.desc || 'In sviluppo';
+    document.getElementById('panel-body').innerHTML    = buildLinks(meta);
+
+    // misura dal hero e mostra
+    const r = hero.getBoundingClientRect();
+    root.style.setProperty('--vw', r.width + 'px');
+    root.style.setProperty('--vh', r.height + 'px');
+
+    panel.hidden = false;
+    document.body.classList.add('panel-open');
+    hero.style.visibility = 'hidden';
+  };
+
+  function closePanel(){ panel.hidden = true; document.body.classList.remove('panel-open'); hero.style.visibility=''; }
+  back?.addEventListener('click', closePanel);
+
+  addEventListener('resize', ()=>{ if(panel && !panel.hidden){ const r = hero.getBoundingClientRect(); root.style.setProperty('--vw', r.width + 'px'); root.style.setProperty('--vh', r.height + 'px'); } }, {passive:true});
+})();
+
+    // Integrazione click nodi con pannelli
+    document.querySelectorAll('.node').forEach((el, i) => {
+      el.addEventListener('click', () => {
+        // Carica modules.json se non già caricato
+        if (!window.MODULES) {
+          fetch('./data/modules.json')
+            .then(r => r.json())
+            .then(data => {
+              window.MODULES = data;
+              const meta = window.MODULES[i];
+              window.__openPanelByIndex(i, meta);
+            })
+            .catch(() => window.__openPanelByIndex(i, null));
+        } else {
+          const meta = window.MODULES[i];
+          window.__openPanelByIndex(i, meta);
+        }
+      });
+    });
+  </script>
+
+  <script>
+    (function applyHoverPalette(){
+      const root = getComputedStyle(document.documentElement);
+      document.querySelectorAll('.node').forEach((el, i)=>{
+        const v = root.getPropertyValue(`--hc${i}`).trim();
+        el.style.setProperty('--hc', v || '#23b5a6'); // fallback teal
+      });
+    })();
+
+/* ===== DMS – Scheda centrale per i 12 PDF ===== */
+(function(){
+  // 1) Mappa contenuti (URL reali)
+  const items = [
+    { tag:'Percorso', title:'Visione — Riaccendiamo il Commercio',
+      desc:'Tre pilastri DMS e percorso operativo nazionale.',
+      main:'./docs/hub-nazionale.pdf', a1:'./docs/dms-e-cluster.pdf' },
+    { tag:'Roadmap', title:'Fasi di adozione DMS', desc:'Cronologia attivazioni e integrazioni.',
+      main:'./docs/dms-e-cluster.pdf' },
+    { tag:'SUAP', title:'Integrazione SUAP/PDND', desc:'Flussi interoperabilità e protocolli.',
+      main:'./docs/hub-nazionale.pdf' },
+    { tag:'Polizia Locale', title:'Backoffice e controlli', desc:'Verifiche in tempo reale su presenza e regolarità.',
+      main:'./docs/dms-e-cluster.pdf' },
+    { tag:'Pagamenti', title:'Wallet e pagoPA', desc:'Modello di incasso e tracciabilità.',
+      main:'./docs/hub-nazionale.pdf' },
+    { tag:'WebGIS', title:'Mappa Mercati+Negozi', desc:'Gemello Digitale territoriale.',
+      main:'./docs/dms-e-cluster.pdf' },
+    { tag:'Eco', title:'DMS Eco Carbon Credit', desc:'Sistema premiante e riequilibrio.',
+      main:'./docs/hub-nazionale.pdf' },
+    { tag:'Notarile', title:'Subingressi automatizzati', desc:'Modello con notaio validatore.',
+      main:'./docs/dms-e-cluster.pdf' },
+    { tag:'Associazioni', title:'Ruolo e governance', desc:'Modello multilivello.',
+      main:'./docs/hub-nazionale.pdf' },
+    { tag:'HUB', title:'Hub Urbani e di Prossimità', desc:'Integrazione moduli e app clienti.',
+      main:'./docs/dms-e-cluster.pdf' },
+    { tag:'KPI', title:'Impatto e risparmi PA', desc:'Indicatori, dati e simulazioni.',
+      main:'./docs/hub-nazionale.pdf' },
+    { tag:'Pitch', title:'Executive summary', desc:'Versione sintetica.',
+      main:'./docs/dms-e-cluster.pdf' },
+  ];
+
+  // 2) Riferimenti UI
+  const card = document.getElementById('dmsCard');
+  const tag = document.getElementById('dmsCardTag');
+  const title = document.getElementById('dmsCardTitle');
+  const desc = document.getElementById('dmsCardDesc');
+  const bMain = document.getElementById('dmsBtnMain');
+  const bA1 = document.getElementById('dmsBtnA1');
+  const bA2 = document.getElementById('dmsBtnA2');
+  const bA3 = document.getElementById('dmsBtnA3');
+  const closeBtn = document.getElementById('dmsCardClose');
+  const backBtn = document.getElementById('dmsBackToVideo');
+
+  function setBtn(a, url, label){
+    if(url){ a.href = url; a.textContent = label || a.textContent; a.style.display='inline-flex'; }
+    else { a.removeAttribute('href'); a.style.display='none'; }
+  }
+
+  function openCard(idx, nodeEl){
+    const it = items[idx] || items[0];
+    tag.textContent = it.tag || 'Documento';
+    title.textContent = it.title || ('Documento ' + (idx+1));
+    desc.textContent = it.desc || '';
+    setBtn(bMain, it.main, 'Apri documento principale');
+    setBtn(bA1, it.a1, 'Apri allegato');
+    setBtn(bA2, it.a2, 'Apri allegato');
+    setBtn(bA3, it.a3, 'Apri allegato');
+    // highlight PDF attivo
+    document.querySelectorAll('.node.is-active').forEach(el=>el.classList.remove('is-active'));
+    if(nodeEl) nodeEl.classList.add('is-active');
+    card.hidden = false;
+  }
+
+  function closeCard(){
+    card.hidden = true;
+    document.querySelectorAll('.node.is-active').forEach(el=>el.classList.remove('is-active'));
+  }
+
+  closeBtn.addEventListener('click', closeCard);
+  backBtn.addEventListener('click', closeCard);
+  card.addEventListener('click', (e)=>{ if(e.target === card) closeCard(); });
+
+  // 3) Collega i 12 PDF dell'orologio
+  const pdfNodes = Array.from(document.querySelectorAll('.node'));
+  pdfNodes.forEach((el, i) => {
+    el.style.cursor = 'pointer';
+    el.addEventListener('click', (ev) => {
+      ev.preventDefault();
+      openCard(i, el);
+    });
+  });
+
+  // 4) Esc -> chiudi
+  document.addEventListener('keydown',(e)=>{ if(e.key==='Escape') closeCard(); });
+})();
+  </script>
+</body>
+</html>
+
