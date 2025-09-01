@@ -27,9 +27,9 @@
     pointer-events:auto;
   }
   .clock-media video{ width:100%; height:100%; display:block; object-fit:cover; }
-  #ellipseLayer{ z-index:5; } /* orologio sotto video */
-  .hand{ z-index:15; } /* lancetta sopra video */
-  .pivot{ z-index:16; }
+  #ellipseLayer, .dial, .clock{ z-index:1; } /* sfondo orologio */
+  .hand{ z-index:20; } /* lancetta sopra video */
+  .pivot{ z-index:30; } /* pivot sopra tutto */
 </style>
 <style>@keyframes cityPulse{0%,100%{transform:scale(1);filter:drop-shadow(0 0 8px rgba(92,242,255,.70))}50%{transform:scale(1.12);filter:drop-shadow(0 0 12px rgba(92,242,255,.95))}}
 /* Layering: PDF > VIDEO > LANCETTA > sfondo */
