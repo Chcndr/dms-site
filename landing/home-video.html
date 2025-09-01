@@ -23,12 +23,13 @@
     border-radius:12px; overflow:hidden;
     background:#000;
     box-shadow:0 8px 24px rgba(0,0,0,.35);
-    z-index:3; /* sotto lancetta */
+    z-index:10; /* sopra orologio */
     pointer-events:auto;
   }
   .clock-media video{ width:100%; height:100%; display:block; object-fit:cover; }
-  .hand{ z-index:4; }
-  .pivot{ z-index:5; }
+  #ellipseLayer{ z-index:5; } /* orologio sotto video */
+  .hand{ z-index:15; } /* lancetta sopra video */
+  .pivot{ z-index:16; }
 </style>
 <style>@keyframes cityPulse{0%,100%{transform:scale(1);filter:drop-shadow(0 0 8px rgba(92,242,255,.70))}50%{transform:scale(1.12);filter:drop-shadow(0 0 12px rgba(92,242,255,.95))}}
 /* Layering: PDF > VIDEO > LANCETTA > sfondo */
